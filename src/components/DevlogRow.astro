@@ -1,0 +1,30 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { formatDate } from '../lib/date';
+
+interface Props {
+  post: CollectionEntry<'devlog'>;
+}
+
+const { post } = Astro.props;
+---
+
+<article class="row">
+  <a class="row-link" href={`/devlog/${post.id}/`}>
+    <Image
+      class="row-thumb"
+      src={post.data.thumbnail}
+      alt={post.data.thumbnailAlt}
+      width={400}
+      loading="lazy"
+    />
+    <div class="row-text">
+      <h2 class="row-title">{post.data.title}</h2>
+      {post.data.summary && <p class="row-summary">{post.data.summary}</p>}
+      <p class="row-date">
+        <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+      </p>
+    </div>
+  </a>
+</article>

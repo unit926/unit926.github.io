@@ -1,0 +1,23 @@
+---
+// 맨 위 가로줄. 탭을 늘리려면 아래 tabs 배열에 한 줄만 더하면 된다.
+const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+
+const tabs = [
+  { href: '/', label: '데브로그', on: path === '/' || path.startsWith('/devlog') },
+  { href: '/about/', label: '소개', on: path.startsWith('/about') },
+  { href: '/presskit/', label: '프레스킷', on: path.startsWith('/presskit') },
+];
+---
+
+<header class="site-header">
+  <a class="site-name" href="/">흑색잔상</a>
+  <nav class="site-tabs" aria-label="사이트 메뉴">
+    {tabs.map((tab) => (
+      <a
+        href={tab.href}
+        class={tab.on ? 'tab on' : 'tab'}
+        aria-current={tab.on ? 'page' : undefined}
+      >{tab.label}</a>
+    ))}
+  </nav>
+</header>

@@ -1,0 +1,28 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import DevlogRow from '../components/DevlogRow.astro';
+
+// draft: true 로 적어둔 글은 로컬에서만 보이고 공개된 사이트에는 안 올라간다.
+const showDrafts = import.meta.env.DEV;
+const posts = (await getCollection('devlog', ({ data }) => showDrafts || !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+---
+
+<BaseLayout title="흑색잔상" description="흑색잔상(Ashen Afterimage) 개발 일지">
+  {
+    posts.length === 0 ? (
+      <div class="stub">
+        <h1>아직 올린 글이 없습니다</h1>
+        <p>첫 데브로그를 쓰면 여기에 나옵니다.</p>
+      </div>
+    ) : (
+      <div class="devlog-list">
+        {posts.map((post) => (
+          <DevlogRow post={post} />
+        ))}
+      </div>
+    )
+  }
+</BaseLayout>
