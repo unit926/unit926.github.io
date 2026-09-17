@@ -1,17 +1,19 @@
 ---
 import { Image } from 'astro:assets';
-import type { CollectionEntry } from 'astro:content';
 import { formatDate } from '../lib/date';
+import { postPath } from '../lib/posts';
+import type { Lang } from '../lib/i18n';
 
 interface Props {
-  post: CollectionEntry<'devlog'>;
+  post: any;
+  lang: Lang;
 }
 
-const { post } = Astro.props;
+const { post, lang } = Astro.props;
 ---
 
 <article class="row">
-  <a class="row-link" href={`/devlog/${post.id}/`}>
+  <a class="row-link" href={postPath(lang, post)}>
     <Image
       class="row-thumb"
       src={post.data.thumbnail}
@@ -23,7 +25,7 @@ const { post } = Astro.props;
       <h2 class="row-title">{post.data.title}</h2>
       {post.data.summary && <p class="row-summary">{post.data.summary}</p>}
       <p class="row-date">
-        <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+        <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date, lang)}</time>
       </p>
     </div>
   </a>

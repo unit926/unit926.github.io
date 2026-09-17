@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { ui, type Lang } from '../lib/i18n';
+
+interface Props {
+  lang: Lang;
+  kind: 'about' | 'presskit';
+}
+
+const { lang, kind } = Astro.props;
+const t = ui[lang];
+const title = kind === 'about' ? t.about : t.presskit;
+const description = kind === 'about' ? t.aboutDescription : t.presskitDescription;
+---
+
+<BaseLayout lang={lang} title={title} description={description}>
+  <div class="stub">
+    <h1>{title}</h1>
+    <p>{t.preparing}</p>
+  </div>
+</BaseLayout>

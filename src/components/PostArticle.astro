@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { formatDate } from '../lib/date';
+import { ui, type Lang } from '../lib/i18n';
+
+interface Props {
+  lang: Lang;
+  post: any;
+  Content: any;
+}
+
+const { lang, post, Content } = Astro.props;
+const t = ui[lang];
+const base = lang === 'ko' ? '' : '/en';
+---
+
+<BaseLayout lang={lang} title={post.data.title} description={post.data.summary}>
+  <article>
+    <header class="post-header">
+      <h1 class="post-title">{post.data.title}</h1>
+      <p class="post-date">
+        <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date, lang)}</time>
+      </p>
+    </header>
+    <div class="post-body">
+      <Content />
+    </div>
+  </article>
+  <nav class="post-nav">
+    <a href={`${base}/`}>&larr; {t.backToList}</a>
+  </nav>
+</BaseLayout>

@@ -10,8 +10,9 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "new": "node scripts/new-post.mjs",
     "images": "node scripts/prepare-images.mjs",
-    "new": "node scripts/new-post.mjs"
+    "deploy": "node scripts/deploy.mjs"
   },
   "dependencies": {
     "astro": "^7.3.3"

@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import DevlogRow from './DevlogRow.astro';
+import { loadPosts } from '../lib/posts';
+import { ui, type Lang } from '../lib/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = ui[lang];
+const posts = await loadPosts(lang);
+---
+
+<BaseLayout lang={lang} title={t.siteName}>
+  {
+    posts.length === 0 ? (
+      <div class="stub">
+        <h1>{t.emptyTitle}</h1>
+        <p>{t.emptyBody}</p>
+      </div>
+    ) : (
+      <div class="devlog-list">
+        {posts.map((post) => (
+          <DevlogRow post={post} lang={lang} />
+        ))}
+      </div>
+    )
+  }
+</BaseLayout>

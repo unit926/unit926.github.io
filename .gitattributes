@@ -1,0 +1,7 @@
+# 줄바꿈 표시를 통일한다. 이게 없으면 파일을 올릴 때마다 경고가 뜬다.
+* text=auto eol=lf
+*.bat text eol=crlf
+*.webp binary
+*.png binary
+*.jpg binary
+*.ico binary

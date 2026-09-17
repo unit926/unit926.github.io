@@ -2,42 +2,53 @@
 import '../styles/global.css';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import { ui, otherLangPath, type Lang } from '../lib/i18n';
 
 interface Props {
+  lang: Lang;
   title: string;
   description?: string;
 }
 
-const SITE_NAME = '흑색잔상';
-const { title, description = '흑색잔상(Ashen Afterimage) 개발 일지' } = Astro.props;
-const pageTitle = title === SITE_NAME ? SITE_NAME : `${title} · ${SITE_NAME}`;
+const { lang, title, description } = Astro.props;
+const t = ui[lang];
+
+const pageTitle = title === t.siteName ? t.siteName : `${title} · ${t.siteName}`;
+const pageDescription = description ?? t.siteDescription;
+
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.pathname;
+const otherHref = Astro.site
+  ? new URL(otherLangPath(lang, Astro.url.pathname), Astro.site).href
+  : otherLangPath(lang, Astro.url.pathname);
 ---
 
 <!doctype html>
-<html lang="ko">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
     <title>{pageTitle}</title>
-    <meta name="description" content={description} />
+    <meta name="description" content={pageDescription} />
     <link rel="canonical" href={canonical} />
-    <meta property="og:site_name" content={SITE_NAME} />
+    <link rel="alternate" hreflang={lang === 'ko' ? 'en' : 'ko'} href={otherHref} />
+    <link rel="alternate" hreflang={lang} href={canonical} />
+    <meta property="og:site_name" content={t.siteName} />
     <meta property="og:title" content={pageTitle} />
-    <meta property="og:description" content={description} />
+    <meta property="og:description" content={pageDescription} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={lang === 'ko' ? 'ko_KR' : 'en_US'} />
     <meta name="generator" content={Astro.generator} />
   </head>
   <body>
     <div class="page">
-      <SiteHeader />
+      <SiteHeader lang={lang} />
       <main>
         <slot />
       </main>
-      <SiteFooter />
+      <SiteFooter lang={lang} />
     </div>
   </body>
 </html>

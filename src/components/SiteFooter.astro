@@ -1,8 +1,15 @@
 ---
+import { ui, type Lang } from '../lib/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
 const year = new Date().getUTCFullYear();
 ---
 
 <footer class="site-footer">
-  <span>흑색잔상 (Ashen Afterimage) · 람호 / R4mh0</span>
+  <span>{ui[lang].byline}</span>
   <span>&copy; {year}</span>
 </footer>

@@ -200,3 +200,34 @@ img { max-width: 100%; height: auto; display: block; }
   .row-thumb { width: 100%; }
   .post-title { font-size: 24px; }
 }
+
+/* ----- 탭 오른쪽 끝의 언어 바꾸기 ----- */
+.site-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.lang-switch {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+  text-decoration: none;
+  border: 1px solid var(--line-strong);
+  border-radius: 99px;
+  padding: 2px 9px;
+  line-height: 1.6;
+}
+
+.lang-switch:hover {
+  color: var(--text);
+  border-color: var(--text);
+}
+
+@media (max-width: 560px) {
+  .site-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .site-tabs { gap: 14px; }
+}

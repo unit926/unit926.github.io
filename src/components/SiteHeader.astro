@@ -1,23 +1,48 @@
 ---
-// 맨 위 가로줄. 탭을 늘리려면 아래 tabs 배열에 한 줄만 더하면 된다.
-const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+import { ui, tabsFor, otherLangPath, type Lang } from '../lib/i18n';
 
-const tabs = [
-  { href: '/', label: '데브로그', on: path === '/' || path.startsWith('/devlog') },
-  { href: '/about/', label: '소개', on: path.startsWith('/about') },
-  { href: '/presskit/', label: '프레스킷', on: path.startsWith('/presskit') },
-];
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = ui[lang];
+const base = lang === 'ko' ? '' : '/en';
+
+const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const homePath = base || '/';
+
+const tabs = tabsFor(lang).map((tab) => {
+  const clean = tab.href.replace(/\/+$/, '') || '/';
+  const on =
+    tab.key === 'devlog'
+      ? path === homePath || path.startsWith(`${base}/devlog`)
+      : path === clean || path.startsWith(`${clean}/`);
+  return { ...tab, on };
+});
+
+const otherHref = otherLangPath(lang, Astro.url.pathname);
 ---
 
 <header class="site-header">
-  <a class="site-name" href="/">흑색잔상</a>
-  <nav class="site-tabs" aria-label="사이트 메뉴">
-    {tabs.map((tab) => (
-      <a
-        href={tab.href}
-        class={tab.on ? 'tab on' : 'tab'}
-        aria-current={tab.on ? 'page' : undefined}
-      >{tab.label}</a>
-    ))}
-  </nav>
+  <a class="site-name" href={`${base}/`}>{t.siteName}</a>
+  <div class="site-right">
+    <nav class="site-tabs" aria-label={t.menuLabel}>
+      {
+        tabs.map((tab) => (
+          <a
+            href={tab.href}
+            class={tab.on ? 'tab on' : 'tab'}
+            aria-current={tab.on ? 'page' : undefined}
+          >{tab.label}</a>
+        ))
+      }
+    </nav>
+    <a
+      class="lang-switch"
+      href={otherHref}
+      hreflang={lang === 'ko' ? 'en' : 'ko'}
+      aria-label={t.langLabel}
+    >{lang === 'ko' ? 'EN' : 'KO'}</a>
+  </div>
 </header>
