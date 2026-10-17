@@ -21,7 +21,7 @@ const diary = (await loadDiary()).map((d) => ({ title: d.data.title, date: forma
 const data = JSON.stringify({ links: LINKS, diary }).replace(/</g, "\\u003c");
 ---
 
-<h1 class="sr">람호 / unit926 — 개발자 홈페이지</h1>
+<h1 class="sr">unit926 — 개발자 홈페이지</h1>
 <main id="stage" class="stage gridpaper" aria-label="개발자 홈페이지">
   <svg id="art" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="group" aria-label="현관과 작업실"></svg>
   <div class="bar">
@@ -40,14 +40,14 @@ const data = JSON.stringify({ links: LINKS, diary }).replace(/</g, "\\u003c");
 <style is:global>
 :root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 img{max-width:100%}
-.noscript{position:fixed;inset:0;z-index:20;padding:32px max(16px,env(safe-area-inset-left,0px));background:#ebe8e1;color:#3a2a20;font-family:"IBM Plex Sans KR","Malgun Gothic",sans-serif}
+.noscript{position:fixed;inset:0;z-index:20;padding:32px max(16px,env(safe-area-inset-left,0px));background:#ebe8e1;color:#3a2a20;font-family:"Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif}
 /* 배치: 모눈종이 한 장이 무대다. 컴퓨터에서는 어두운 책상 위 종이 한 장(가로 16:10), 휴대폰 · 세로 화면에서는 화면 전체가 종이(세로 배치) */
 :root{
   --paper:#ebe8e1; --paper-hi:#f4f2ed; --grid:#d3cdc1; --ink:#3a2a20; --ink-soft:#7d6858;
   --desk:#2d2926; --red:#c4412f; --green:#3e8a49;
-  --hand:"Gaegu","Nanum Pen Script","Comic Sans MS",cursive;
-  --body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
-  --title:"Gowun Batang","Nanum Myeongjo","Batang",serif;   /* 창 제목 · 글 제목 — 손글씨는 그림 속 큰 글자에만 */
+  --hand:"Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
+  --body:"Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
+  --title:"Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;   /* 글꼴은 그림 속 글자까지 전부 고운 돋움 하나 (람호 2026-10-17) */
   color-scheme:light;
 }
 [hidden]{display:none!important}
@@ -121,7 +121,10 @@ body.full .stage{width:100%;height:100%;background:none}
 
 /* 문 */
 .door-panel{transform-origin:0% 50%;transition:transform .7s cubic-bezier(.4,0,.2,1)}
-[data-door=open] .door-panel{transform:scaleX(.17)}
+/* 열린 문 — 람호 손그림(법인 로고): 왼쪽 경첩에 붙은 채 앞으로 열려 비스듬히 기운다. 위 · 오른쪽 틈으로 어두운 안쪽, 오른쪽 끝에 문 두께 (2026-10-17) */
+[data-door=open] .door-panel{transform:matrix(.75,.15,0,1,0,0)}
+.door-edge,.door-fly{opacity:0;pointer-events:none;transition:opacity .35s .5s}
+[data-door=open] .door-edge,[data-door=open] .door-fly{opacity:1}
 .rattle{animation:rattle .38s ease-in-out}
 @keyframes rattle{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
 
@@ -195,7 +198,7 @@ body.full .stage{width:100%;height:100%;background:none}
 .pad{display:grid;justify-items:center;gap:14px}
 .disp{display:flex;align-items:center;justify-content:space-between;gap:14px;box-sizing:border-box;width:236px;max-width:100%;
   border:2.5px solid var(--ink);border-radius:8px;padding:6px 14px;background:var(--paper-hi)}
-.digits{font-family:ui-monospace,"Consolas",monospace;font-size:30px;letter-spacing:.32em;font-variant-numeric:tabular-nums}
+.digits{font-family:var(--body);font-size:30px;letter-spacing:.32em;font-variant-numeric:tabular-nums}
 .lamp{width:17px;height:17px;border-radius:50%;border:2.5px solid var(--ink);background:var(--paper-hi);flex:none}
 .lamp.ok{background:var(--green)}
 .lamp.bad{background:var(--red)}
@@ -280,7 +283,7 @@ button.go{cursor:pointer}
 <script is:inline>
 (() => {
   /* ── 바꿔 끼울 값 ── */
-  const BIRTHDAY = { m: 11, d: 7 };           // 람호 생일 — 비밀번호 1107
+  const BIRTHDAY = { m: 11, d: 7 };           // 거주자 생일 — 비밀번호 1107
   const CODE = String(BIRTHDAY.m).padStart(2, '0') + String(BIRTHDAY.d).padStart(2, '0');
   const DATA = JSON.parse(document.getElementById('room-data').textContent);   // 위 --- 사이의 LINKS · 일기 목록
   const LINK = DATA.links;
@@ -383,6 +386,9 @@ button.go{cursor:pointer}
         <text class="hand b" x="150" y="102" text-anchor="middle" font-size="48">926</text>
         <circle class="ink thin" cx="150" cy="168" r="7"/>
         <path class="ink" d="M262 358 H212"/><circle class="ink thin pf" cx="262" cy="358" r="9"/></g>`, [300, -12]) +
+    deco(`<path class="ink pf door-edge" d="M225 45 L238 41 L238 601 L225 605 Z"/>
+      <g class="door-fly"><path class="ink thin" d="M330 46 C352 50 372 40 384 26 C394 14 384 4 376 12 C368 22 384 34 404 26 C430 16 452 -6 468 -28"/>
+        <path class="ink thin" style="fill:var(--ink)" d="M472 -32 C466 -48 452 -50 456 -38 C458 -32 466 -31 472 -32 Z M472 -32 C480 -50 494 -46 488 -36 C484 -30 477 -30 472 -32 Z"/></g>`) +
     O('mat', '현관 매트', [-30, 562, 362, 56], `<g class="mat-body"><path class="ink pf" d="M-6 572 L306 572 L326 610 L-26 610 Z"/><path class="ink thin" d="M10 584 H290 M2 598 H302" stroke-dasharray="8 12"/></g>`, [330, 566]) +
     O('key', '예비 열쇠', [100, 566, 140, 46], `<circle class="ink" cx="132" cy="590" r="13"/><path class="ink" d="M145 590 H214 M198 590 V602 M210 590 V600"/>`);
 
@@ -554,14 +560,14 @@ button.go{cursor:pointer}
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const PANEL = {
     presskit: `<h3>PRESS KIT</h3>
-      <dl><dt>게임</dt><dd>흑색잔상 · Ashen Afterimage</dd><dt>개발</dt><dd>람호 / unit926 · 1인 개발</dd><dt>장르</dt><dd>3D 포인트앤클릭 퍼즐 어드벤처</dd><dt>엔진</dt><dd>Unity 6</dd></dl>
+      <dl><dt>게임</dt><dd>흑색잔상 · Ashen Afterimage</dd><dt>개발</dt><dd>unit926 · 1인 개발</dd><dt>장르</dt><dd>3D 포인트앤클릭 퍼즐 어드벤처</dd><dt>엔진</dt><dd>Unity 6</dd></dl>
       <div class="links">${go(LINK.itch, 'itch.io')}${go(LINK.x, 'X')}<a class="go" href="/devlog/">데브로그</a></div>`,
     drawer: `<h3>일기장</h3><p class="sub">서랍 속 공책 — 개인적인 생각 · 일기</p>` + (DATA.diary.length
       ? `<ul class="diary-list">${DATA.diary.map(d => `<li><a href="${esc(d.href)}"><span>${esc(d.date)}</span><b>${esc(d.title)}</b></a></li>`).join('')}</ul>`
       : `<p class="empty">아직 쓴 일기가 없다.</p>`),
     steam: `<h3>Steam</h3><p class="sub">흑색잔상 게임 페이지</p>${or(LINK.steam, 'Steam 열기')}`,
     itch: `<h3>itch.io</h3><p class="sub">unit926</p>${or(LINK.itch, 'itch.io 열기')}`,
-    card: `<h3>명함</h3><p class="sub">연락하기</p><dl><dt>개발</dt><dd>람호 / unit926</dd></dl>` +
+    card: `<h3>명함</h3><p class="sub">연락하기</p><dl><dt>개발</dt><dd>926호 거주자 · unit926</dd></dl>` +
       (LINK.email ? `<div class="links"><a class="go" href="mailto:${esc(LINK.email)}">${esc(LINK.email)}</a></div>` : SOON),
     console: `<h3>휴대용 게임기</h3><p class="sub">좋아하는 게임</p>${SOON}`,
     books: `<h3>책 더미</h3><p class="sub">좋아하는 만화 · 책</p><div class="book"><b>오늘부터 신령님</b><span>스즈키 줄리에타</span><em>마음이 힘들 때 즐겨 보는 만화</em></div>`,
@@ -571,7 +577,7 @@ button.go{cursor:pointer}
     memo: `<h3>메모판</h3><p class="sub">레딧</p>${or(LINK.reddit, 'Reddit u/unit926')}`,
     frames: `<h3>액자</h3><p class="sub">그림과 에셋 — 아트스테이션</p>${or(LINK.artstation, '아트스테이션 열기')}`,
     order: () => `<div class="receipt"><h3>케이크 주문서</h3><table>
-      <tr><th>주문하신 분</th><td>람호</td></tr><tr><th>품목</th><td>생일 케이크 1개</td></tr>
+      <tr><th>주문하신 분</th><td>926호 거주자</td></tr><tr><th>품목</th><td>생일 케이크 1개</td></tr>
       <tr><th>찾아가는 날</th><td><b>${BIRTHDAY.m}월 ${BIRTHDAY.d}일</b></td></tr></table><span class="stamp">접수</span></div>
       <p class="sub" style="margin-top:12px">우편함에 꽂혀 있던 종이다.</p>`
   };
@@ -589,7 +595,7 @@ button.go{cursor:pointer}
   }
   function build() {
     layout = innerHeight > innerWidth ? 'tall' : 'wide';
-    mode = (layout === 'tall' || innerWidth < 900) ? 'full' : 'framed';
+    mode = 'full';   // 넓은 화면도 모눈종이를 화면 끝까지 채운다 — 액자 둘레가 어두워 비어 보였다 (2026-10-17)
     document.body.classList.toggle('full', mode === 'full');
     document.body.classList.toggle('framed', mode === 'framed');
     svg.setAttribute('viewBox', layout === 'tall' ? '0 0 900 1600' : '0 0 1600 1000');
@@ -792,7 +798,7 @@ button.go{cursor:pointer}
   addEventListener('resize', () => {
     clearTimeout(rt);
     rt = setTimeout(() => {
-      const L = innerHeight > innerWidth ? 'tall' : 'wide', M = (L === 'tall' || innerWidth < 900) ? 'full' : 'framed';
+      const L = innerHeight > innerWidth ? 'tall' : 'wide', M = 'full';
       if (L !== layout || M !== mode) build();
     }, 120);
   });

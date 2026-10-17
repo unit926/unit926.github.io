@@ -16,14 +16,14 @@ export const ui = {
     emptyTitle: '아직 올린 글이 없습니다',
     emptyBody: '첫 데브로그를 쓰면 여기에 나옵니다.',
     preparing: '준비 중입니다.',
-    byline: '흑색잔상 (Ashen Afterimage) · 람호 / unit926',
+    byline: '흑색잔상 (Ashen Afterimage) · unit926',
     menuLabel: '사이트 메뉴',
     langLabel: '언어',
-    roomDescription: '흑색잔상(Ashen Afterimage)을 만드는 람호 / unit926의 926호 작업실',
+    roomDescription: '흑색잔상(Ashen Afterimage)을 만드는 unit926의 926호 작업실',
     devlogIntro: '개발하면서 쓰는 글',
     backToDesk: '책상으로 돌아가기',
     backToRoom: '방으로 돌아가기',
-    diaryDescription: '람호 / unit926의 일기',
+    diaryDescription: '926호 거주자의 일기',
   },
   en: {
     siteName: 'Ashen Afterimage',
@@ -44,7 +44,7 @@ export const ui = {
     devlogIntro: 'Notes written while making the game',
     backToDesk: 'Back to the desk',
     backToRoom: 'Back to the room',
-    diaryDescription: 'Diary of unit926',
+    diaryDescription: 'Diary of the Resident of 926',
   },
 } as const;
 

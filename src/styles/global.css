@@ -11,7 +11,7 @@
   --hover: #f5f5f5;
 
   --page-width: 800px;
-  --font: system-ui, -apple-system, "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+  --font: "Gowun Dodum", system-ui, -apple-system, "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
 }
 
 /* ===== 여기부터는 뼈대다. 색을 바꿀 때 건드리지 않아도 된다. ===== */

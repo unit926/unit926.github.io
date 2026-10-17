@@ -40,9 +40,9 @@ const shownAddress = (Astro.site ? Astro.site.host : '') + Astro.url.pathname;
 <style is:global>
   :root {
     --paper: #ebe8e1; --paper-hi: #f4f2ed; --grid: #d3cdc1; --ink: #3a2a20; --ink-soft: #7d6858; --desk: #2d2926;
-    --hand: "Gaegu", "Nanum Pen Script", cursive;
-    --body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
-    --title: "Gowun Batang", "Nanum Myeongjo", "Batang", serif;
+    --hand: "Gowun Dodum", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+    --body: "Gowun Dodum", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+    --title: "Gowun Dodum", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
     color-scheme: light;
   }
   *, *::before, *::after { box-sizing: border-box; }
@@ -68,7 +68,7 @@ const shownAddress = (Astro.site ? Astro.site.host : '') + Astro.url.pathname;
   }
   .addr {
     display: flex; align-items: center; gap: 10px; padding: 6px 12px; border-bottom: 2.5px solid var(--ink); background: var(--paper);
-    font-family: ui-monospace, "Consolas", monospace; font-size: 13px; color: var(--ink-soft);
+    font-family: var(--body); font-size: 13px; color: var(--ink-soft);
   }
   .addr i { width: 9px; height: 9px; border-radius: 50%; border: 2px solid var(--ink); flex: none; }
   .addr span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
