@@ -306,12 +306,15 @@ button.go{cursor:pointer}
     if (ac && ac.state === 'suspended') ac.resume();
     return ac;
   }
-  function tone(f, dur, type, vol, when) {
+  function tone(f, dur, type, vol, when, att) {
     const c = actx(); if (!c || muted) return;
     const o = c.createOscillator(), g = c.createGain(), t = c.currentTime + (when || 0);
     o.type = type || 'sine'; o.frequency.value = f;
-    g.gain.setValueAtTime(vol || .1, t); g.gain.exponentialRampToValueAtTime(.0008, t + dur);
-    o.connect(g).connect(c.destination); o.start(t); o.stop(t + dur + .03);
+    // att: 0에서 짧게 차오르는 시간(초) — 시작이 「칙」 하고 터지지 않게 (2026-10-17)
+    const a = att || 0;
+    if (a) { g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(vol || .1, t + a); } else g.gain.setValueAtTime(vol || .1, t);
+    g.gain.exponentialRampToValueAtTime(.0008, t + a + dur);
+    o.connect(g).connect(c.destination); o.start(t); o.stop(t + a + dur + .03);
   }
   function noise(dur, freq, vol, when) {
     const c = actx(); if (!c || muted) return;
@@ -321,18 +324,19 @@ button.go{cursor:pointer}
     s.buffer = buf; f.type = 'lowpass'; f.frequency.value = freq; g.gain.value = vol;
     s.connect(f).connect(g).connect(c.destination); s.start(c.currentTime + (when || 0));
   }
+  // 잡음(쉭 · 치익 · 사락)으로 만든 소리가 거슬린다 하셔서 서랍 · 넘기기 · 책 · 문 · 주문서 · 선물 · 매트는 음으로 바꿨다 (2026-10-17)
   const SFX = {
     rattle() { noise(.09, 240, .9); noise(.08, 300, .7, .12); noise(.07, 220, .5, .22); },
     wrong() { tone(880, .11, 'square', .05); tone(880, .16, 'square', .05, .15); },
     key() { tone(1500, .035, 'square', .025); },
     right() { tone(988, .08, 'square', .045); tone(1319, .12, 'square', .045, .09); noise(.05, 2600, .5, .24); noise(.04, 1800, .4, .3); },
-    lid() { tone(260, .14, 'triangle', .08); noise(.05, 1600, .25, .1); },
-    paper() { noise(.22, 3200, .18); },
-    door() { noise(.55, 420, .35); tone(140, .3, 'sine', .05, .05); },
-    step() { noise(.08, 900, .25); },
-    drawer() { noise(.3, 650, .32); tone(190, .08, 'triangle', .05, .26); },
+    lid() { tone(330, .08, 'triangle', .06, 0, .006); },
+    paper() { tone(1047, .15, 'sine', .03, 0, .01); tone(1319, .25, 'sine', .03, .1, .01); },
+    door() { tone(784, .04, 'triangle', .035, 0, .004); tone(110, .5, 'sine', .07, .08, .03); tone(165, .4, 'sine', .035, .08, .03); },
+    step() { tone(392, .07, 'sine', .055, 0, .008); },
+    drawer() { tone(330, .05, 'triangle', .05, 0, .006); tone(294, .05, 'triangle', .05, .06, .006); tone(262, .05, 'triangle', .05, .12, .006); tone(147, .18, 'sine', .08, .2, .01); },
     hum() { tone(120, .5, 'sine', .035); tone(2400, .06, 'sine', .015, .1); },
-    gift() { noise(.14, 2600, .22); tone(1047, .4, 'sine', .045, .14); tone(1319, .4, 'sine', .045, .24); tone(1568, .6, 'sine', .045, .34); },
+    gift() { tone(784, .4, 'sine', .04, 0, .01); tone(988, .4, 'sine', .04, .1, .01); tone(1175, .6, 'sine', .04, .2, .01); },
     string() { tone(196, .35, 'triangle', .06); tone(294, .3, 'triangle', .035, .02); },
     pop() { noise(.04, 1800, .3); tone(880, .07, 'sine', .04, .03); },
     blip() { tone(660, .07, 'square', .03); tone(990, .1, 'square', .03, .08); },
@@ -340,10 +344,12 @@ button.go{cursor:pointer}
     buzz() { tone(150, .09, 'square', .025); tone(150, .09, 'square', .025, .14); },
     chime() { tone(1319, .3, 'sine', .04); tone(988, .45, 'sine', .04, .2); },
     flutter() { noise(.25, 4200, .14); },
-    knock() { noise(.06, 500, .4); noise(.05, 450, .3, .12); }
+    knock() { noise(.06, 500, .4); noise(.05, 450, .3, .12); },
+    books() { tone(523, .06, 'triangle', .05, 0, .006); tone(440, .08, 'triangle', .05, .09, .006); },
+    mat() { tone(196, .1, 'sine', .07, 0, .01); }
   };
 
-  const POKE_SFX = { steam: 'string', itch: 'string', card: 'pop', console: 'blip', books: 'paper', headphones: 'note', phone: 'buzz', wallpad: 'chime', memo: 'flutter', frames: 'knock' };
+  const POKE_SFX = { steam: 'string', itch: 'string', card: 'pop', console: 'blip', books: 'books', headphones: 'note', phone: 'buzz', wallpad: 'chime', memo: 'flutter', frames: 'knock' };
 
   /* ── 그림 조각 ── */
   const rays = (x, y) => `<g class="rays" transform="translate(${x} ${y})"><line x1="0" y1="0" x2="9" y2="-15"/><line x1="17" y1="7" x2="33" y2="2"/><line x1="-12" y1="1" x2="-23" y2="-10"/></g>`;
@@ -749,7 +755,7 @@ button.go{cursor:pointer}
         else enter();
         break;
       case 'mat':
-        S.mat = S.mat === 'down' ? 'up' : 'down'; SFX.step(); sync();
+        S.mat = S.mat === 'down' ? 'up' : 'down'; SFX.mat(); sync();
         if (S.mat === 'up' && S.key === 'here' && S.door === 'locked') toast('매트 밑에 무언가 있다');
         break;
       case 'key':
