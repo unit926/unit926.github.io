@@ -63,6 +63,6 @@ try {
 }
 
 console.log('\n  [끝] 올렸습니다.');
-console.log('       2~3분 뒤 https://unit926.github.io 에 반영됩니다.');
+console.log('       2~3분 뒤 https://unit926.com 에 반영됩니다.');
 console.log('       진행 상황은 여기서 봅니다:');
 console.log('       https://github.com/unit926/unit926.github.io/actions\n');

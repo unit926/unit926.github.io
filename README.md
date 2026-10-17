@@ -1,7 +1,7 @@
 # 흑색잔상 데브로그 사이트
 
-- 한국어: https://unit926.github.io
-- 영어: https://unit926.github.io/en/
+- 한국어: https://unit926.com
+- 영어: https://unit926.com/en/
 
 글은 **한글판과 영문판을 짝으로** 쓴다.
 
