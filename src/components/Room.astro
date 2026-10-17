@@ -324,12 +324,13 @@ button.go{cursor:pointer}
     s.buffer = buf; f.type = 'lowpass'; f.frequency.value = freq; g.gain.value = vol;
     s.connect(f).connect(g).connect(c.destination); s.start(c.currentTime + (when || 0));
   }
-  // 잡음(쉭 · 치익 · 사락)으로 만든 소리가 거슬린다 하셔서 서랍 · 넘기기 · 책 · 문 · 주문서 · 선물 · 매트는 음으로 바꿨다 (2026-10-17)
+  // 잡음(쉭 · 치익 · 사락)으로 만든 소리가 거슬린다 하셔서 서랍 · 넘기기 · 문 · 주문서 · 선물 · 매트 · 명함 · 메모판 · 비번 맞음은 음으로,
+  // 책 더미는 「톡톡」(책장 소리는 코드로 잘 안 나와 물림), 잠긴 문 덜컹은 두 번으로 바꿨다 (2026-10-17)
   const SFX = {
-    rattle() { noise(.09, 240, .9); noise(.08, 300, .7, .12); noise(.07, 220, .5, .22); },
+    rattle() { noise(.09, 240, .9); noise(.08, 300, .7, .12); },
     wrong() { tone(880, .11, 'square', .05); tone(880, .16, 'square', .05, .15); },
     key() { tone(1500, .035, 'square', .025); },
-    right() { tone(988, .08, 'square', .045); tone(1319, .12, 'square', .045, .09); noise(.05, 2600, .5, .24); noise(.04, 1800, .4, .3); },
+    right() { tone(1319, .05, 'triangle', .035, 0, .004); tone(784, .18, 'sine', .05, .08, .01); tone(1175, .32, 'sine', .05, .2, .01); },
     lid() { tone(330, .08, 'triangle', .06, 0, .006); },
     paper() { tone(1047, .15, 'sine', .03, 0, .01); tone(1319, .25, 'sine', .03, .1, .01); },
     door() { tone(784, .04, 'triangle', .035, 0, .004); tone(110, .5, 'sine', .07, .08, .03); tone(165, .4, 'sine', .035, .08, .03); },
@@ -338,12 +339,12 @@ button.go{cursor:pointer}
     hum() { tone(120, .5, 'sine', .035); tone(2400, .06, 'sine', .015, .1); },
     gift() { tone(784, .4, 'sine', .04, 0, .01); tone(988, .4, 'sine', .04, .1, .01); tone(1175, .6, 'sine', .04, .2, .01); },
     string() { tone(196, .35, 'triangle', .06); tone(294, .3, 'triangle', .035, .02); },
-    pop() { noise(.04, 1800, .3); tone(880, .07, 'sine', .04, .03); },
+    pop() { tone(1175, .04, 'triangle', .035, 0, .004); tone(784, .09, 'sine', .045, .05, .006); },
     blip() { tone(660, .07, 'square', .03); tone(990, .1, 'square', .03, .08); },
     note() { tone(784, .25, 'sine', .04); tone(988, .3, 'sine', .04, .14); },
     buzz() { tone(150, .09, 'square', .025); tone(150, .09, 'square', .025, .14); },
     chime() { tone(1319, .3, 'sine', .04); tone(988, .45, 'sine', .04, .2); },
-    flutter() { noise(.25, 4200, .14); },
+    flutter() { tone(587, .05, 'triangle', .045, 0, .005); tone(880, .1, 'sine', .03, .05, .008); },
     knock() { noise(.06, 500, .4); noise(.05, 450, .3, .12); },
     books() { tone(523, .06, 'triangle', .05, 0, .006); tone(440, .08, 'triangle', .05, .09, .006); },
     mat() { tone(196, .1, 'sine', .07, 0, .01); }
