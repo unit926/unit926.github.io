@@ -54,7 +54,7 @@ const all = (await readdir(INBOX, { withFileTypes: true })).filter((e) => e.isFi
 const refused = all.filter((n) => REFUSED.has(path.extname(n).toLowerCase()));
 const files = all
   .filter((n) => ALLOWED.has(path.extname(n).toLowerCase()))
-  .sort((a, b) => a.localeCompare(b, 'ko'));
+  .sort((a, b) => a.localeCompare(b, 'ko', { numeric: true }));
 
 if (refused.length > 0) {
   console.log('\n  아래 파일은 넣지 않았습니다. 움직이는 그림과 동영상은 저장소를 크게 만듭니다.');
@@ -71,8 +71,12 @@ if (files.length === 0) {
 
 // 같은 날짜로 이미 넣어둔 사진이 있으면 그 다음 번호부터 매긴다.
 const existing = existsSync(OUT) ? await readdir(OUT) : [];
-const numberPattern = new RegExp(`^${prefix}-(\d{2})\.webp$`);
-const used = existing.map((n) => numberPattern.exec(n)).filter(Boolean).map((m) => Number(m[1]));
+// 파일 이름을 글자로 잘라서 본다. 정규식을 안 쓰는 이유는 따옴표 안에서 역슬래시가
+// 조용히 사라져 아무것도 못 찾는 사고가 났기 때문이다 (2026-09-17).
+const used = existing
+  .filter((n) => n.startsWith(`${prefix}-`) && n.toLowerCase().endsWith('.webp'))
+  .map((n) => Number(n.slice(prefix.length + 1, -'.webp'.length)))
+  .filter((n) => Number.isInteger(n) && n > 0);
 let next = used.length > 0 ? Math.max(...used) + 1 : 1;
 
 const results = [];
@@ -81,7 +85,12 @@ let afterTotal = 0;
 
 for (const name of files) {
   const from = path.join(INBOX, name);
-  const outName = `${prefix}-${String(next).padStart(2, '0')}.webp`;
+  // 이미 있는 파일은 절대 덮어쓰지 않는다. 비어 있는 번호가 나올 때까지 올린다.
+  let outName = `${prefix}-${String(next).padStart(2, '0')}.webp`;
+  while (existsSync(path.join(OUT, outName))) {
+    next += 1;
+    outName = `${prefix}-${String(next).padStart(2, '0')}.webp`;
+  }
   const to = path.join(OUT, outName);
 
   const before = (await stat(from)).size;

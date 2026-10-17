@@ -1,5 +1,13 @@
 ---
-import DevlogList from "../components/DevlogList.astro";
+// 첫 화면 — 926호 현관. 문을 열고 들어가면 방 네 벽이 나온다.
+// 예전 첫 화면(데브로그 글 목록)은 /devlog/ 로 옮겼다(2026-10-17).
+import RoomLayout from '../layouts/RoomLayout.astro';
+import Room from '../components/Room.astro';
+import { ui } from '../lib/i18n';
+
+const t = ui.ko;
 ---
 
-<DevlogList lang="ko" />
+<RoomLayout lang="ko" title={t.siteName} description={t.roomDescription}>
+  <Room />
+</RoomLayout>

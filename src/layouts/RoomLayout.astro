@@ -1,0 +1,36 @@
+---
+// 첫 화면(현관 → 방) 틀. 머리줄 · 바닥줄 없이 방 그림이 화면을 채운다.
+// 자바스크립트가 꺼진 손님과 검색 엔진에는 <noscript> 안의 링크가 보인다.
+import HeadMeta from '../components/HeadMeta.astro';
+import { ui, type Lang } from '../lib/i18n';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description?: string;
+}
+
+const { lang, title, description } = Astro.props;
+const t = ui[lang];
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <HeadMeta lang={lang} title={title} description={description} />
+  </head>
+  <body>
+    <slot />
+    <noscript>
+      <div class="noscript">
+        <h1>{t.siteName}</h1>
+        <p>{t.byline}</p>
+        <ul>
+          <li><a href="/devlog/">{t.devlog}</a></li>
+          <li><a href="/presskit/">{t.presskit}</a></li>
+          <li><a href="/about/">{t.about}</a></li>
+        </ul>
+      </div>
+    </noscript>
+  </body>
+</html>

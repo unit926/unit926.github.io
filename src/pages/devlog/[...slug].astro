@@ -1,7 +1,11 @@
 ---
+// 데브로그 글 한 편 — 모니터 화면 모양(2026-10-17). 주소는 예전과 같다.
+// 영어판(/en/devlog/...)은 아직 예전 틀(PostArticle)을 그대로 쓴다.
 import { render } from 'astro:content';
-import PostArticle from '../../components/PostArticle.astro';
+import MonitorLayout from '../../layouts/MonitorLayout.astro';
 import { loadPosts, postSlug } from '../../lib/posts';
+import { formatDate } from '../../lib/date';
+import { ui } from '../../lib/i18n';
 
 export async function getStaticPaths() {
   const posts = await loadPosts('ko');
@@ -13,6 +17,16 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content } = await render(post);
+const t = ui.ko;
 ---
 
-<PostArticle lang="ko" post={post} Content={Content} />
+<MonitorLayout lang="ko" title={post.data.title} description={post.data.summary}>
+  <a class="go small" href="/devlog/">&larr; {t.backToList}</a>
+  <article>
+    <h1>{post.data.title}</h1>
+    <p class="meta"><time datetime={post.data.date.toISOString()}>{formatDate(post.data.date, 'ko')}</time></p>
+    <div class="post-body">
+      <Content />
+    </div>
+  </article>
+</MonitorLayout>

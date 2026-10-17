@@ -1,0 +1,47 @@
+---
+// 쪽 머리말 — 제목 · 설명 · 공유 미리보기 정보 · 글꼴.
+// 현관과 방(첫 화면) · 모니터 모양 데브로그 · 공책 모양 일기가 같이 쓴다.
+// 예전 틀(BaseLayout)을 쓰는 소개 · 프레스킷 · 영어판은 이 부품을 안 쓴다.
+import { ui, otherLangPath, type Lang } from '../lib/i18n';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description?: string;
+  // 반대말 판 주소. 안 주면 주소 앞에 /en 을 붙여 짐작하고, null 이면 반대말 판이 없다는 뜻이다(일기).
+  altPath?: string | null;
+}
+
+const { lang, title, description, altPath } = Astro.props;
+const t = ui[lang];
+
+const pageTitle = title === t.siteName ? t.siteName : `${title} · ${t.siteName}`;
+const pageDescription = description ?? t.siteDescription;
+
+const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.pathname;
+const otherPath = altPath === undefined ? otherLangPath(lang, Astro.url.pathname) : altPath;
+const otherHref = otherPath === null ? null : Astro.site ? new URL(otherPath, Astro.site).href : otherPath;
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" href="/favicon.ico" />
+<title>{pageTitle}</title>
+<meta name="description" content={pageDescription} />
+<link rel="canonical" href={canonical} />
+{otherHref && <link rel="alternate" hreflang={lang === 'ko' ? 'en' : 'ko'} href={otherHref} />}
+{otherHref && <link rel="alternate" hreflang={lang} href={canonical} />}
+<meta property="og:site_name" content={t.siteName} />
+<meta property="og:title" content={pageTitle} />
+<meta property="og:description" content={pageDescription} />
+<meta property="og:type" content="website" />
+<meta property="og:url" content={canonical} />
+<meta property="og:locale" content={lang === 'ko' ? 'ko_KR' : 'en_US'} />
+<meta name="generator" content={Astro.generator} />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"
+/>

@@ -1,0 +1,36 @@
+---
+// 데브로그 글 목록 — 모니터 화면 모양. 예전에는 첫 화면(/)이었다(2026-10-17에 옮김).
+import { Image } from 'astro:assets';
+import MonitorLayout from '../../layouts/MonitorLayout.astro';
+import { loadPosts, postPath } from '../../lib/posts';
+import { formatDate } from '../../lib/date';
+import { ui } from '../../lib/i18n';
+
+const t = ui.ko;
+const posts = await loadPosts('ko');
+---
+
+<MonitorLayout lang="ko" title={t.devlog} description={t.siteDescription} altPath="/en/">
+  <h1>{t.devlog}</h1>
+  <p class="meta">{t.devlogIntro}</p>
+  {
+    posts.length === 0 ? (
+      <p class="soon">{t.emptyBody}</p>
+    ) : (
+      <ul class="rows">
+        {posts.map((post) => (
+          <li>
+            <a class="row" href={postPath('ko', post)}>
+              <Image class="thumb" src={post.data.thumbnail} alt={post.data.thumbnailAlt} width={240} loading="lazy" />
+              <span class="txt">
+                <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date, 'ko')}</time>
+                <b>{post.data.title}</b>
+                {post.data.summary && <span class="sum">{post.data.summary}</span>}
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</MonitorLayout>

@@ -11,6 +11,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "new": "node scripts/new-post.mjs",
+    "diary": "node scripts/new-diary.mjs",
     "images": "node scripts/prepare-images.mjs",
     "deploy": "node scripts/deploy.mjs"
   },

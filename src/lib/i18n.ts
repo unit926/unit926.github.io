@@ -19,6 +19,11 @@ export const ui = {
     byline: '흑색잔상 (Ashen Afterimage) · 람호 / unit926',
     menuLabel: '사이트 메뉴',
     langLabel: '언어',
+    roomDescription: '흑색잔상(Ashen Afterimage)을 만드는 람호 / unit926의 926호 작업실',
+    devlogIntro: '개발하면서 쓰는 글',
+    backToDesk: '책상으로 돌아가기',
+    backToRoom: '방으로 돌아가기',
+    diaryDescription: '람호 / unit926의 일기',
   },
   en: {
     siteName: 'Ashen Afterimage',
@@ -35,14 +40,20 @@ export const ui = {
     byline: 'Ashen Afterimage · unit926',
     menuLabel: 'Site menu',
     langLabel: 'Language',
+    roomDescription: 'Room 926 — the workroom of unit926, maker of Ashen Afterimage',
+    devlogIntro: 'Notes written while making the game',
+    backToDesk: 'Back to the desk',
+    backToRoom: 'Back to the room',
+    diaryDescription: 'Diary of unit926',
   },
 } as const;
 
 // 탭 세 개의 주소. 한국어는 주소에 표시가 없고 영어는 /en/ 아래에 있다.
+// 한국어 첫 화면(/)은 현관과 방이라 데브로그 탭은 /devlog/ 로 간다(2026-10-17). 영어는 아직 /en/ 이 글 목록이다.
 export function tabsFor(lang: Lang) {
   const base = lang === 'ko' ? '' : '/en';
   return [
-    { href: `${base}/`, label: ui[lang].devlog, key: 'devlog' },
+    { href: lang === 'ko' ? '/devlog/' : `${base}/`, label: ui[lang].devlog, key: 'devlog' },
     { href: `${base}/about/`, label: ui[lang].about, key: 'about' },
     { href: `${base}/presskit/`, label: ui[lang].presskit, key: 'presskit' },
   ];
