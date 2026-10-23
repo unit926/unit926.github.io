@@ -3,6 +3,7 @@ import '../styles/global.css';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import { ui, otherLangPath, type Lang } from '../lib/i18n';
+import { paletteStyle } from '../lib/palette';
 
 interface Props {
   lang: Lang;
@@ -33,6 +34,7 @@ const otherHref = Astro.site
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" />
+    <Fragment set:html={paletteStyle()} />
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
     <link rel="canonical" href={canonical} />

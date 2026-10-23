@@ -1,14 +1,13 @@
 /* =========================================================
-   색과 글꼴을 바꾸는 자리는 아래 :root 한 곳이다.
-   꾸미기는 나중에 한다. 지금은 읽히기만 하는 최소값을 둔다.
+   색은 src/lib/palette.ts 한 곳에서 온다(--bg · --ink · --s1 …). 여기서는 그 색을 이 쪽 이름으로 이어 쓴다.
+   글꼴은 고운 돋움 하나.
    ========================================================= */
 :root {
-  --bg: #ffffff;
-  --text: #1a1a1a;
-  --text-dim: #6b6b6b;
-  --line: #e4e4e4;
-  --line-strong: #c9c9c9;
-  --hover: #f5f5f5;
+  --text: var(--ink);
+  --text-dim: var(--ink-soft);
+  --line: color-mix(in srgb, var(--ink) 12%, transparent);
+  --line-strong: color-mix(in srgb, var(--ink) 26%, transparent);
+  --hover: color-mix(in srgb, var(--s1) 30%, transparent);
 
   --page-width: 800px;
   --font: "Gowun Dodum", system-ui, -apple-system, "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
@@ -73,7 +72,7 @@ img { max-width: 100%; height: auto; display: block; }
 
 .tab.on {
   color: var(--text);
-  border-bottom-color: var(--text);
+  border-bottom-color: var(--s2);
 }
 
 /* ----- 글 목록: 한 줄에 한 편 ----- */

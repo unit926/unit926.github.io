@@ -6,6 +6,7 @@ import HeadMeta from '../../components/HeadMeta.astro';
 import { loadDiary, diarySlug } from '../../lib/diary';
 import { formatDate } from '../../lib/date';
 import { ui } from '../../lib/i18n';
+import { paletteStyle } from '../../lib/palette';
 
 export async function getStaticPaths() {
   const entries = await loadDiary();
@@ -24,6 +25,7 @@ const t = ui.ko;
 <html lang="ko">
   <head>
     <HeadMeta lang="ko" title={entry.data.title} description={t.diaryDescription} altPath={null} />
+    <Fragment set:html={paletteStyle()} />
   </head>
   <body class="table-top">
     <main class="notebook">
@@ -38,48 +40,44 @@ const t = ui.ko;
 </html>
 
 <style is:global>
-  :root {
-    --paper: #ebe8e1; --paper-hi: #f4f2ed; --grid: #d3cdc1; --ink: #3a2a20; --ink-soft: #7d6858; --desk: #2d2926;
-    --body: "Gowun Dodum", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
-    --title: "Gowun Dodum", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
-    color-scheme: light;
-  }
+  /* 색은 src/lib/palette.ts 한 곳에서 온다. 공책은 방의 서랍에서 꺼낸 일기장 종이와 같은 모양이다 */
+  :root { --hand: "Gowun Dodum", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif; }
   *, *::before, *::after { box-sizing: border-box; }
   body.table-top {
-    margin: 0; min-height: 100vh; background: var(--desk); color: var(--ink); font-family: var(--body);
+    margin: 0; min-height: 100vh; background: var(--bg); color: var(--ink); font-family: var(--hand);
     padding: max(24px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px))
       max(32px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
   }
   .notebook {
-    width: min(720px, 100%); margin: 0 auto; padding: 26px 28px 36px 40px;
-    background-color: var(--paper-hi);
-    border: 2.5px solid var(--ink); border-left-width: 12px; border-radius: 6px 12px 10px 6px;
-    box-shadow: 7px 9px 0 rgba(0, 0, 0, .28);
+    width: min(720px, 100%); margin: 0 auto; padding: 26px 28px 40px 66px; border-radius: 5px;
+    background-color: var(--sheet);
+    background-image: linear-gradient(90deg, transparent 46px, color-mix(in srgb, var(--bad) 45%, transparent) 46px 47.5px, transparent 47.5px);
+    box-shadow: inset 8px 0 0 var(--s3), 0 1px 1px rgba(0, 0, 0, .05), 0 26px 60px -14px rgba(30, 20, 10, .32), 0 10px 22px -12px rgba(30, 20, 10, .22);
     animation: book-in .4s ease-out;
   }
-  @keyframes book-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  @keyframes book-in { from { opacity: 0; transform: translateY(14px); } }
   /* 한국어는 띄어쓰기 자리에서만 줄을 넘긴다 — 없으면 「두 줄 / 로」처럼 낱말 가운데서 끊긴다 */
   .notebook { word-break: keep-all; overflow-wrap: break-word; }
-  .notebook h1 { font-family: var(--title); font-weight: 700; font-size: 28px; line-height: 1.3; margin: 18px 0 2px; text-wrap: balance; }
-  .notebook .meta { color: var(--ink-soft); font-size: 13.5px; margin: 0 0 10px; font-variant-numeric: tabular-nums; }
+  .notebook h1 { font-weight: 700; font-size: 28px; line-height: 1.3; margin: 20px 0 2px; text-wrap: balance; }
+  .notebook .meta { color: var(--ink-soft); font-size: 13.5px; margin: 0 0 12px; font-variant-numeric: tabular-nums; }
   .diary-body {
-    font-size: 16px; line-height: 32px;
+    font-size: 16.5px; line-height: 34px;
     /* 공책 줄은 본문에만 긋는다. 공책 맨 위부터 그으면 제목 · 날짜 높이만큼 어긋나 줄이 글자를 가로지른다 (2026-10-17) */
-    background-image: linear-gradient(transparent 31px, var(--grid) 31px);
-    background-size: 100% 32px;
+    background-image: linear-gradient(transparent 33px, color-mix(in srgb, var(--ink) 12%, transparent) 33px);
+    background-size: 100% 34px;
   }
   /* 옵시디언에서 엔터로 나눈 줄을 사이트에서도 나눈다 — 없으면 두 줄이 한 줄로 붙는다 (2026-10-17) */
-  .diary-body p { margin: 0 0 32px; white-space: pre-line; }
-  .diary-body h2, .diary-body h3 { font-family: var(--title); font-size: 19px; line-height: 32px; margin: 0 0 0; }
-  .diary-body ul, .diary-body ol { margin: 0 0 32px; padding-left: 22px; }
-  .diary-body img { max-width: 100%; height: auto; display: block; margin: 0 0 32px; border: 2px solid var(--ink); }
-  .diary-body a { color: var(--ink); }
+  .diary-body p { margin: 0 0 34px; white-space: pre-line; }
+  .diary-body h2, .diary-body h3 { font-size: 19px; line-height: 34px; margin: 0; }
+  .diary-body ul, .diary-body ol { margin: 0 0 34px; padding-left: 22px; }
+  .diary-body img { max-width: 100%; height: auto; display: block; margin: 0 0 34px; border-radius: 6px; }
+  .diary-body a { color: var(--s3); }
   .go {
-    display: inline-block; font-family: var(--body); font-weight: 500; font-size: 14px; line-height: 1.4; color: var(--ink);
-    text-decoration: none; background: var(--paper-hi); border: 2.5px solid var(--ink); border-radius: 10px 13px 9px 12px; padding: 5px 12px;
+    display: inline-flex; align-items: center; gap: 8px; font: 14px/1.3 var(--hand); color: var(--ink); text-decoration: none;
+    border-radius: 999px; padding: 7px 14px; box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--ink) 25%, transparent); transition: box-shadow .15s;
   }
-  .go:hover { background: var(--ink); color: var(--paper-hi); }
-  .go:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
-  @media (max-width: 600px) { .notebook { padding: 18px 16px 28px 24px; border-left-width: 9px; } }
+  .go:hover { box-shadow: inset 0 0 0 1.5px var(--ink); }
+  .go:focus-visible { outline: 2.5px solid var(--s2); outline-offset: 3px; }
+  @media (max-width: 600px) { .notebook { padding: 18px 16px 30px 48px; background-image: linear-gradient(90deg, transparent 32px, color-mix(in srgb, var(--bad) 45%, transparent) 32px 33.5px, transparent 33.5px); } }
   @media (prefers-reduced-motion: reduce) { .notebook { animation: none; } }
 </style>
