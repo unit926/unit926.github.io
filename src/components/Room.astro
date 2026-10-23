@@ -58,7 +58,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--hand);over
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .4 0 0 0 0 .34 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
 /* ── 그림 칠 ── */
-.k{fill:var(--ink)} .k2{fill:var(--ink);opacity:.5} .kh{fill:var(--hat);opacity:var(--hato)}
+.k,.k2{display:none} .kh{fill:var(--hat);opacity:var(--hato)}   /* 물건 둘레 선(k · k2)은 그리지 않는다 — 테두리 없음 (2026-10-24) */
 .ks{fill:var(--s3)} .kw{fill:var(--hi)}
 .f0{fill:var(--hi)} .f1{fill:var(--a1)} .f2{fill:var(--a2)} .f3{fill:var(--a3)} .dk{fill:var(--dk)}
 .s1{fill:var(--s1)} .s2{fill:var(--s2)} .s3{fill:var(--s3)}
