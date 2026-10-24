@@ -51,11 +51,11 @@ const PALETTES = {
     'sky-d': '#6F86A3', 'sky-e': '#A47A6A', 'sky-n': '#0A101A', sun: '#F0D896', moon: '#E6E9EE', bld: '#3E4B60', 'bld-n': '#060910', bw: '#7F8FA6',
     sheet: '#182131', veil: 'rgba(10,15,24,.6)', grain: '.35', blend: 'screen', scheme: 'dark',
   },
-  // F · 흑연과 얼음 — 어두운 흑연 + 옅은 하늘빛
+  // F · 흑연과 얼음 — 어두운 흑연 + 가라앉은 잿빛 푸른색
   f: {
     bg: '#121316', hi: '#33363C', wall: '#1C1D21', wall2: '#16171A', ceil: '#18191C', floor: '#26282D',
     a1: '#222428', a2: '#2D3035', a3: '#444850', dk: '#0A0B0D', ink: '#E6E7EA', 'ink-soft': '#9EA1A8',
-    s1: '#C3DCF5', s2: '#7FB2E5', s3: '#4A7CB0', on: '#0C1A28', ok: '#6DB07A', bad: '#E06A5A',
+    s1: '#A3B3C4', s2: '#6F8CA8', s3: '#46607A', on: '#111A23', ok: '#6DB07A', bad: '#E06A5A',
     shc: '#000', sho: '.38', hat: '#000', hato: '.6',
     'sky-d': '#7E8FA0', 'sky-e': '#8A8496', 'sky-n': '#0E1117', sun: '#ECE6D0', moon: '#E6E7EA', bld: '#474B53', 'bld-n': '#08090C', bw: '#8C929C',
     sheet: '#1E2024', veil: 'rgba(14,15,17,.6)', grain: '.35', blend: 'screen', scheme: 'dark',
