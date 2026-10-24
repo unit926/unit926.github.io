@@ -312,9 +312,16 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--hand);over
     set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
     del(k) { try { localStorage.removeItem(k); } catch (e) {} }
   };
+  /* 문은 탭 · 창을 닫으면 잊는다 — 들를 때마다 잠긴 문부터 (2026-10-25) */
+  const tab = {
+    get(k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v) { try { sessionStorage.setItem(k, v); } catch (e) {} },
+    del(k) { try { sessionStorage.removeItem(k); } catch (e) {} }
+  };
+  mem.del('u926-door');
 
   const WALLS = ['n', 'e', 's', 'w'];
-  const S = { scene: 'porch', wall: 0, door: mem.get('u926-door') === 'open' ? 'open' : 'locked', mat: 'down', key: 'here', mail: 'shut', kp: '', drawer: 'shut', gift: 'shut' };
+  const S = { scene: 'porch', wall: 0, door: tab.get('u926-door') === 'open' ? 'open' : 'locked', mat: 'down', key: 'here', mail: 'shut', kp: '', drawer: 'shut', gift: 'shut' };
   let muted = mem.get('u926-mute') === '1';
 
   /* ── 소리 (누를 때만 난다 · 파일 없이 만든다) — 2026-10-17에 고른 그대로 ── */
@@ -1340,7 +1347,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--hand);over
   function resetZoom() { svg.style.transform = ''; svg.style.transformOrigin = ''; svg.classList.remove('in', 'zoom'); }
 
   /* ── 움직임 ── */
-  function unlock(msg) { S.door = 'unlocked'; mem.set('u926-door', 'open'); SFX.right(); sync(); toast(msg); }
+  function unlock(msg) { S.door = 'unlocked'; tab.set('u926-door', 'open'); SFX.right(); sync(); toast(msg); }
   function enter() {
     if (S.door === 'opening') return;
     SFX.door();
@@ -1417,7 +1424,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--hand);over
   else if (h === 'matup') { S.mat = 'up'; sync(); }
   else if (h === 'devlog') location.replace('/devlog/');
   else if (h === 'open') { S.door = 'open'; sync(); }
-  else if (h === 'lock') { mem.del('u926-door'); S.door = 'locked'; sync(); toast('문을 다시 잠갔다'); }
+  else if (h === 'lock') { tab.del('u926-door'); S.door = 'locked'; sync(); toast('문을 다시 잠갔다'); }
   else if (h === 'diary') { S.door = 'open'; S.scene = 'room'; S.wall = 3; S.drawer = 'open'; sync(); openPanel(PANEL.drawer, 'diary', svg.querySelector('#sc-w [data-obj=drawer]')); }
   else if (/^panel-[a-z]+$/.test(h) && PANEL[h.slice(6)]) {
     const id = h.slice(6), wall = { steam: 0, itch: 0, card: 0, console: 1, books: 1, headphones: 1, phone: 2, wallpad: 2, memo: 2, frames: 3 }[id] ?? 0;
