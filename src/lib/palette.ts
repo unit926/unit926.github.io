@@ -1,5 +1,6 @@
-// 사이트 색 — 바꾸는 자리는 맨 아래 PALETTE 한 글자다(a · b · c · d · e).
+// 사이트 색 — 바꾸는 자리는 맨 아래 PALETTE 한 글자다(a · b · c · d · e · f).
 // 네 벌은 2026-10-24 시험판에서 같은 그림에 입혀 비교했고 C(먹과 주홍)로 정했다가, 같은 날 E(짙은 청색과 주황)로 바꿨다.
+// 2026-10-25 어두운 다섯 벌을 다시 비교해 F(흑연과 얼음)로 바꿨다.
 // 현관과 방 · 데브로그 모니터 · 일기 · 영어판이 모두 여기서 색을 받아 간다.
 //
 // 칠하는 규칙 — 누를 수 있는 물건에만 포인트 색(s1 · s2 · s3)을 칠하고, 꾸밈은 회색 단계(a1 · a2 · a3)로만 칠한다.
@@ -50,9 +51,18 @@ const PALETTES = {
     'sky-d': '#6F86A3', 'sky-e': '#A47A6A', 'sky-n': '#0A101A', sun: '#F0D896', moon: '#E6E9EE', bld: '#3E4B60', 'bld-n': '#060910', bw: '#7F8FA6',
     sheet: '#182131', veil: 'rgba(10,15,24,.6)', grain: '.35', blend: 'screen', scheme: 'dark',
   },
+  // F · 흑연과 얼음 — 어두운 흑연 + 옅은 하늘빛
+  f: {
+    bg: '#121316', hi: '#33363C', wall: '#1C1D21', wall2: '#16171A', ceil: '#18191C', floor: '#26282D',
+    a1: '#222428', a2: '#2D3035', a3: '#444850', dk: '#0A0B0D', ink: '#E6E7EA', 'ink-soft': '#9EA1A8',
+    s1: '#C3DCF5', s2: '#7FB2E5', s3: '#4A7CB0', on: '#0C1A28', ok: '#6DB07A', bad: '#E06A5A',
+    shc: '#000', sho: '.38', hat: '#000', hato: '.6',
+    'sky-d': '#7E8FA0', 'sky-e': '#8A8496', 'sky-n': '#0E1117', sun: '#ECE6D0', moon: '#E6E7EA', bld: '#474B53', 'bld-n': '#08090C', bw: '#8C929C',
+    sheet: '#1E2024', veil: 'rgba(14,15,17,.6)', grain: '.35', blend: 'screen', scheme: 'dark',
+  },
 } as const;
 
-export const PALETTE: keyof typeof PALETTES = 'e';
+export const PALETTE: keyof typeof PALETTES = 'f';
 
 // 쪽마다 <head> 에 넣는 색 한 덩어리 — :root 에 --bg · --ink 같은 이름으로 깔린다
 export function paletteStyle(): string {
