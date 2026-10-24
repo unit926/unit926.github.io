@@ -1,9 +1,10 @@
 // 사이트 색 — 바꾸는 자리는 맨 아래 PALETTE 한 글자다(a · b · c · d · e · f).
 // 네 벌은 2026-10-24 시험판에서 같은 그림에 입혀 비교했고 C(먹과 주홍)로 정했다가, 같은 날 E(짙은 청색과 주황)로 바꿨다.
-// 2026-10-25 어두운 다섯 벌을 다시 비교해 F(흑연과 얼음)로 바꿨다.
+// 2026-10-25 어두운 다섯 벌을 다시 비교해 F(흑연)로 바꿨고, 포인트 색은 같은 날 하늘색 · 탁한 파랑을 거쳐 코발트로 정했다.
 // 현관과 방 · 데브로그 모니터 · 일기 · 영어판이 모두 여기서 색을 받아 간다.
 //
 // 칠하는 규칙 — 누를 수 있는 물건에만 포인트 색(s1 · s2 · s3)을 칠하고, 꾸밈은 회색 단계(a1 · a2 · a3)로만 칠한다.
+// 글 속 링크 글자는 link — 밝은 판은 s3, 어두운 판은 s1 (어두운 판의 s3는 종이 위에서 안 읽힌다).
 
 const PALETTES = {
   // A · 재와 호박 — 밝은 잿빛 + 호박색
@@ -13,7 +14,7 @@ const PALETTES = {
     s1: '#F2D6A2', s2: '#DFA449', s3: '#A6681F', on: '#2A1E12', ok: '#4E8A5A', bad: '#C1473A',
     shc: '#3B2D1E', sho: '.12', hat: '#23201D', hato: '.36',
     'sky-d': '#D3DEE3', 'sky-e': '#EECCA8', 'sky-n': '#2C333F', sun: '#F7E6B4', moon: '#F3EEDB', bld: '#BCC4C8', 'bld-n': '#1C222B', bw: '#E6ECEE',
-    sheet: '#FBF9F5', veil: 'rgba(236,233,227,.78)', grain: '.55', blend: 'multiply', scheme: 'light',
+    link: '#A6681F', sheet: '#FBF9F5', veil: 'rgba(236,233,227,.78)', grain: '.55', blend: 'multiply', scheme: 'light',
   },
   // B · 밤 — 어두운 잿빛 + 호박 불빛
   b: {
@@ -22,7 +23,7 @@ const PALETTES = {
     s1: '#EDC27A', s2: '#CD8E38', s3: '#8E5D1F', on: '#22170B', ok: '#6DB07A', bad: '#E06A5A',
     shc: '#000', sho: '.38', hat: '#000', hato: '.6',
     'sky-d': '#7E93A0', 'sky-e': '#A9806A', 'sky-n': '#10151C', sun: '#F0D896', moon: '#ECE5CC', bld: '#4F5963', 'bld-n': '#080B10', bw: '#8F9DA6',
-    sheet: '#26282C', veil: 'rgba(15,16,18,.6)', grain: '.35', blend: 'screen', scheme: 'dark',
+    link: '#EDC27A', sheet: '#26282C', veil: 'rgba(15,16,18,.6)', grain: '.35', blend: 'screen', scheme: 'dark',
   },
   // C · 먹과 주홍 — 밝은 잿빛 + 주홍
   c: {
@@ -31,7 +32,7 @@ const PALETTES = {
     s1: '#F3C6B5', s2: '#DD6847', s3: '#A43A25', on: '#2A120C', ok: '#4E8A5A', bad: '#B8322A',
     shc: '#2A2220', sho: '.12', hat: '#1F1F23', hato: '.36',
     'sky-d': '#D6DFE3', 'sky-e': '#EFCDB4', 'sky-n': '#2B313B', sun: '#F7E4C4', moon: '#F3EEDF', bld: '#BFC5C9', 'bld-n': '#1B2028', bw: '#E8EDEF',
-    sheet: '#FCFBF9', veil: 'rgba(238,236,232,.78)', grain: '.55', blend: 'multiply', scheme: 'light',
+    link: '#A43A25', sheet: '#FCFBF9', veil: 'rgba(238,236,232,.78)', grain: '.55', blend: 'multiply', scheme: 'light',
   },
   // D · 푸른 재 — 푸른 잿빛 + 호박색
   d: {
@@ -40,7 +41,7 @@ const PALETTES = {
     s1: '#F1D19A', s2: '#DA9C41', s3: '#9D6320', on: '#2A1E12', ok: '#4E8A5A', bad: '#C1473A',
     shc: '#1C2A33', sho: '.12', hat: '#1D2931', hato: '.36',
     'sky-d': '#CFDCE2', 'sky-e': '#EBCBAA', 'sky-n': '#28303B', sun: '#F6E5B6', moon: '#F1EEDF', bld: '#B3BEC3', 'bld-n': '#19202A', bw: '#E3EAED',
-    sheet: '#F8FAFA', veil: 'rgba(230,234,235,.78)', grain: '.5', blend: 'multiply', scheme: 'light',
+    link: '#9D6320', sheet: '#F8FAFA', veil: 'rgba(230,234,235,.78)', grain: '.5', blend: 'multiply', scheme: 'light',
   },
   // E · 짙은 청색과 주황 — 어두운 청색 + 쨍한 주황
   e: {
@@ -49,16 +50,16 @@ const PALETTES = {
     s1: '#FFB37E', s2: '#FF6A1A', s3: '#C24A0C', on: '#2A1206', ok: '#6DB07A', bad: '#F0645A',
     shc: '#000', sho: '.38', hat: '#000', hato: '.6',
     'sky-d': '#6F86A3', 'sky-e': '#A47A6A', 'sky-n': '#0A101A', sun: '#F0D896', moon: '#E6E9EE', bld: '#3E4B60', 'bld-n': '#060910', bw: '#7F8FA6',
-    sheet: '#182131', veil: 'rgba(10,15,24,.6)', grain: '.35', blend: 'screen', scheme: 'dark',
+    link: '#FFB37E', sheet: '#182131', veil: 'rgba(10,15,24,.6)', grain: '.35', blend: 'screen', scheme: 'dark',
   },
-  // F · 흑연과 얼음 — 어두운 흑연 + 가라앉은 잿빛 푸른색
+  // F · 흑연과 코발트 — 어두운 흑연 + 보랏빛이 도는 진한 파랑
   f: {
     bg: '#121316', hi: '#33363C', wall: '#1C1D21', wall2: '#16171A', ceil: '#18191C', floor: '#26282D',
     a1: '#222428', a2: '#2D3035', a3: '#444850', dk: '#0A0B0D', ink: '#E6E7EA', 'ink-soft': '#9EA1A8',
-    s1: '#A3B3C4', s2: '#6F8CA8', s3: '#46607A', on: '#111A23', ok: '#6DB07A', bad: '#E06A5A',
+    s1: '#B3BCF5', s2: '#6474E6', s3: '#3B46A8', on: '#10132E', ok: '#6DB07A', bad: '#E06A5A',
     shc: '#000', sho: '.38', hat: '#000', hato: '.6',
     'sky-d': '#7E8FA0', 'sky-e': '#8A8496', 'sky-n': '#0E1117', sun: '#ECE6D0', moon: '#E6E7EA', bld: '#474B53', 'bld-n': '#08090C', bw: '#8C929C',
-    sheet: '#1E2024', veil: 'rgba(14,15,17,.6)', grain: '.35', blend: 'screen', scheme: 'dark',
+    link: '#B3BCF5', sheet: '#1E2024', veil: 'rgba(14,15,17,.6)', grain: '.35', blend: 'screen', scheme: 'dark',
   },
 } as const;
 
