@@ -84,8 +84,9 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--hand);over
 [data-mail=open] .mail-lid{transform:scaleY(0)}
 .mail-lid-open{transform-origin:50% 100%;transform:scaleY(0);transition:transform .35s .14s cubic-bezier(.3,1.5,.5,1)}
 [data-mail=open] .mail-lid-open{transform:none}
-.mail-paper{opacity:0;transform:translateY(105%);transition:transform .45s .2s cubic-bezier(.3,1.3,.5,1),opacity .2s .2s}
-[data-mail=open] .mail-paper{opacity:1;transform:none}
+/* 편지 — 아래 칸 안에서 오른쪽 위로 튀어나오며 시계 방향으로 기운다 (람호 2026-10-25 빨간 그림 · 오른쪽 35 · 위 17 · 14도) */
+.mail-paper{opacity:0;transform-origin:50% 50%;transform:translateY(105%);transition:transform .5s .2s cubic-bezier(.3,1.4,.5,1),opacity .2s .2s}
+[data-mail=open] .mail-paper{opacity:1;transform:translate(35px,-17px) rotate(14deg)}
 
 /* 선물 상자 */
 .gift-lid{transform-origin:0% 100%;transition:transform .45s cubic-bezier(.3,1.6,.5,1)}
