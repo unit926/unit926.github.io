@@ -78,21 +78,20 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--hand);over
 .scene.on{opacity:1;visibility:visible;transition:opacity .38s ease}
 
 /* 우편함 */
-.lid,.mail-paper,.mat-body,[data-obj=mat] .hit,.gift-lid,.gift-bow,.gift-card,.conf,.drawer-front,.wig,.rise,.lift,.notes{transform-box:fill-box}
-.lid{transform-origin:0% 100%;transition:transform .4s cubic-bezier(.3,1.5,.5,1)}
-[data-mail=open] .lid{transform:rotate(-14deg)}
-.mail-inside{opacity:0;transition:opacity .15s}
-[data-mail=open] .mail-inside{opacity:1}
+.mail-lid,.mail-lid-open,.mail-paper,.mat-body,[data-obj=mat] .hit,.gift-lid,.gift-card,.conf,.drawer-front,.wig,.rise,.lift,.notes{transform-box:fill-box}
+/* 앞면 아래 칸의 덮개 — 닫힌 덮개가 아랫변(경첩)으로 접혀 내려가고, 열린 덮개가 같은 아랫변에서 펼쳐진다 */
+.mail-lid{transform-origin:50% 100%;transition:transform .18s ease-in}
+[data-mail=open] .mail-lid{transform:scaleY(0)}
+.mail-lid-open{transform-origin:50% 100%;transform:scaleY(0);transition:transform .35s .14s cubic-bezier(.3,1.5,.5,1)}
+[data-mail=open] .mail-lid-open{transform:none}
 .mail-paper{opacity:0;transform:translateY(70px);transition:transform .45s .1s cubic-bezier(.3,1.3,.5,1),opacity .2s .1s}
 [data-mail=open] .mail-paper{opacity:1;transform:translateY(30px)}
 
 /* 선물 상자 */
 .gift-lid{transform-origin:0% 100%;transition:transform .45s cubic-bezier(.3,1.6,.5,1)}
 [data-gift=open] .gift-lid{transform:translate(-18px,-172px) rotate(-13deg)}
-.gift-bow{transform-origin:50% 100%;transition:transform .35s ease-out,opacity .3s}
-[data-gift=open] .gift-bow{transform:translateY(-80px) scale(.5);opacity:0}
-.gift-card{opacity:0;transform:translateY(20px);transition:transform .5s .1s cubic-bezier(.3,1.4,.5,1),opacity .2s .1s}
-[data-gift=open] .gift-card{opacity:1;transform:translateY(-74px)}
+.gift-card{opacity:0;transform:translateY(80px);transition:transform .5s .1s cubic-bezier(.3,1.4,.5,1),opacity .2s .1s}
+[data-gift=open] .gift-card{opacity:1;transform:none}
 .conf{transform-origin:50% 50%;opacity:0}
 [data-gift=open] .conf{animation:conf 1s cubic-bezier(.2,.7,.4,1) forwards}
 @keyframes conf{0%{opacity:1;transform:translate(0,0) rotate(0)}80%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(var(--r))}}
@@ -104,12 +103,12 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--hand);over
 .door-open{display:none}
 [data-door=open] .door-open,[data-door=opening] .door-open{display:inline}
 [data-door=open] .door-closed,[data-door=opening] .door-closed{display:none}
-[data-door=opening] [data-obj=keypad]{opacity:0;pointer-events:none}
+[data-door=opening] [data-obj=keypad]{opacity:0;pointer-events:none;transition-duration:.1s}   /* 열리는 문간 위에 떠 보이지 않게 빨리 */
 .door-fly{opacity:0;transition:opacity .35s .3s}
 [data-door=open] .door-fly{opacity:1}
 .rattle{animation:rattle .38s ease-in-out}
 @keyframes rattle{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
-.led{fill:var(--s2);transition:fill .2s}
+.led{fill:transparent;transition:fill .2s}   /* 평소에는 손그림의 파란 점이 그대로 보인다 */
 [data-door=unlocked] .led,[data-door=open] .led,[data-door=opening] .led{fill:var(--ok)}
 [data-kp=bad] .led{fill:var(--bad)}
 
@@ -288,7 +287,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--hand);over
 @media (prefers-reduced-motion:reduce){
   .obj.poked .wig,.obj.poked .rise,.obj.poked .lift,.obj.poked .notes,.obj.poked .glow{animation:none}
   .stage>svg,.stage>svg.zoom,.drawer-front,.obj .mv{transition:none}
-  .scene,.lid,.mail-paper,.mat-body,.toast,.gift-lid,.gift-bow,.gift-card,.sheet,.veil{transition:none;animation:none}
+  .scene,.mail-lid,.mail-lid-open,.mail-paper,.mat-body,.toast,.gift-lid,.gift-card,.sheet,.veil{transition:none;animation:none}
   .conf{display:none} .rattle,.shake{animation:none}
 }
 .noscript{position:fixed;inset:0;z-index:20;padding:32px max(16px,env(safe-area-inset-left,0px));background:var(--bg);color:var(--ink);font-family:var(--hand)}
@@ -526,29 +525,17 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--hand);over
     }, 'deco');
   }
 
+  /* 우편함 — 손그림 몸통 · 덮개 두 장(닫힘 · 열림). 덮개 자리는 람호 참고 그림 두 장에 겹쳐 맞춘 값(원본 픽셀 ÷ 2).
+     예전 우편함보다 세로로 길어 가운데는 예전 자리에 두고, 아랫변이 아래 띠 선(-328)에 닿지 않게 올렸다 */
   function gMailbox() {
-    reseed('mailbox'); VX = 142.5;
-    const x = W(-350, -228), y = -476, w = 138, h = 92, z = 44, cid = 'mc' + (++UID);
-    const P = (X, Y, Z = z) => pj(X, Y, Z);
-    const shade = layer(() => { F(poly([[x + 6, y + 12], [x + w + 16, y + 12], [x + w + 16, y + h + 14], [x + 6, y + h + 14]]), 'sh'); });
-    const body = layer(() => {
-      box3(x, y, w, h, 0, z, { ff: 's2', fs: 's3', w: K2 });
-      const lab = [P(x + 16, y + 38), P(x + 70, y + 38), P(x + 70, y + 64), P(x + 16, y + 64)];
-      F(poly(lab), 'f0'); PL(lab, K3);
-      TX(P(x + 43, y + 57)[0], P(x + 43, y + 57)[1], '926', 15, { anchor: 'middle' });
-      LP(P(x + 86, y + 50), P(x + 124, y + 50), K2); LP(P(x + 86, y + 56), P(x + 124, y + 56), K3, { soft: true });
-      for (let i = 0; i < 3; i++) LP(P(x + 12 + i * 4, y + h - 10), P(x + w - 12 - i * 4, y + h - 10), 1.1, { soft: true, ov: 0 });
-    });
-    const inside = layer(() => { F(poly([P(x + 4, y + 2), P(x + w - 4, y + 2), P(x + w - 4, y + 20), P(x + 4, y + 20)]), 'dk'); }, 'mail-inside');
-    // 주문서 — 우편함 틈으로 빼꼼 고개만 내민다
-    const paper = layer(() => { const R = RR(x + w * .66, y - 14, 58, 78, 4, K3, 'f0'); for (let i = 0; i < 2; i++) scrib(x + w * .66 - 18, y - 42 + i * 10, i ? 22 : 34, R); }, 'mail-paper');
-    const lid = layer(() => {
-      const q = [P(x - 5, y - 8, z + 3), P(x + w + 5, y - 8, z + 3), P(x + w + 5, y + 20, z + 3), P(x - 5, y + 20, z + 3)];
-      F(poly(q), 's1'); PL(q, K2);
-      const m = P(x + w / 2, y + 12, z + 3); RRD(m[0] - 14, m[1] - 3, 28, 7, 3, K3, 'f3');
-    }, 'lid');
-    const clip = `<clipPath id="${cid}"><rect x="${x - 60}" y="${y - 260}" width="${w + 120}" height="${270}"/></clipPath>`;
-    return O('mailbox', '우편함', [x - 26, y - 40, w + 64, h + 70], shade + body + inside + clip + `<g clip-path="url(#${cid})">${paper}</g>` + lid);
+    reseed('mailbox');
+    const x = W(-375, -253), y = -541, cx = x + 80.5, sy = y + 33, cid = 'mc' + (++UID);   // cx · sy = 위 투입구 가운데
+    // 주문서 — 위 투입구로 빼꼼 고개만 내민다 (코드 그림 · 손그림 종이가 오면 바꾼다)
+    const paper = layer(() => { const R = RR(cx, sy - 24, 58, 78, 4, K3, 'f0'); for (let i = 0; i < 2; i++) scrib(cx - 18, sy - 52 + i * 10, i ? 22 : 34, R); }, 'mail-paper');
+    const clip = `<clipPath id="${cid}"><rect x="${x}" y="${sy - 260}" width="182" height="260"/></clipPath>`;
+    return O('mailbox', '우편함', [x - 2, y - 10, 178, 208], PIC('mailbox', x, y, 181.5, 197.5)
+      + PIC('mail-lid', x + 26.3, y + 101.4, 106.5, 73.5, 'mail-lid') + PIC('mail-lid-open', x + 1.5, y + 118.6, 127.5, 56.5, 'mail-lid-open')
+      + clip + `<g clip-path="url(#${cid})">${paper}</g>`);
   }
 
   function gDoor() {
@@ -567,7 +554,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--hand);over
       // 안쪽 현관 바닥에 새어 나온 빛 한 줄
       F(poly([[150, -6], [285, -6], [285, 0], [150, 0]], 0), 'f3');
     });
-    const door = O('door', '926호 문', [0, -630, 285, 630], doorway + `<g class="door-closed">${doorPanel(0)}</g><g class="door-open">${doorPanel(DOOR_OPEN)}</g>`, true);
+    const door = O('door', '926호 문', [0, -630, 285, 630], doorway + `<g class="door-closed">${doorPic(0)}</g><g class="door-open">${doorPic(1)}</g>`, true);
     const fly = layer(() => {
       const d = 'M246 -598 C 286 -600 300 -626 330 -630 C 360 -634 352 -606 334 -612 C 318 -618 340 -660 384 -668 C 412 -673 430 -690 444 -712';
       const pts = curvePts(d, { step: 4, j: .2 }); for (let i = 0; i + 3 < pts.length; i += 5) pushK('k2', outline(pts.slice(i, i + 3), 2));
@@ -599,105 +586,49 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--hand);over
     return frame + key + mat + door + fly;
   }
 
-  /* 문짝 — 왼쪽 경첩을 축으로 손님 쪽으로 열린다. th = 열린 각도(라디안).
-     문짝 위의 점(u = 경첩에서 잰 가로, v = 높이)을 그 각도로 돌려 원근대로 옮기므로, 열릴수록 바깥 끝이 가까워져 커지고 아랫변이 매트 위를 지나간다 */
-  const DOOR_OPEN = 58 * Math.PI / 180;
-  function doorPanel(th) {
-    reseed('doorpanel'); VX = 142.5;
-    const c = Math.cos(th), s = Math.sin(th), T = 15, shut = th < .001;
-    const P = (u, v, o = 0) => pj(u * c - o * s, v, u * s + o * c);
-    const ring = (cu, cv, ru, rv, n = 32, sw = 1.06) => Array.from({ length: n + 1 }, (_, i) => { const a = .6 + i / n * 6.2832 * sw; return P(cu + Math.cos(a) * ru, cv + Math.sin(a) * rv); });
-    return layer(() => {
-      if (!shut) { const e = [P(285, -630), P(285, -630, -T), P(285, -2, -T), P(285, -2)]; F(poly(e), 'f3'); PL(e, K2); }
-      const face = [P(0, -630), P(285, -630), P(285, -2), P(0, -2)];
-      F(poly(face), 'f2'); F(poly(face, 0), 'gB'); if (!shut) F(poly(face, 0), 'gR');
-      PL(face, K1);
-      F(poly([P(26, -604), P(259, -604), P(254, -598), P(32, -598), P(32, -30), P(26, -26)]), 'f1');
-      PL([P(26, -604), P(259, -604), P(259, -26), P(26, -26)], K3);
-      LP(P(32, -598), P(254, -598), 1.1, { soft: true }); LP(P(32, -598), P(32, -30), 1.1, { soft: true });
-      // 문패와 926 — 글자도 문짝과 같이 기운다
-      const np = ring(142.5, -540, 57, 31); F(poly(np.slice(0, 33), 0), 's1'); pushK('k', outline(np, K2, .5, .3));
-      pushK('k2', outline(ring(142.5, -540, 50, 25), 1.2, .5, .3));
-      const o0 = P(142.5, -540), ou = P(143.5, -540), ov = P(142.5, -539), f4 = v => v.toFixed(4);
-      CX.t.push(`<text class="tx on b" font-size="40" text-anchor="middle" x="0" y="14" transform="matrix(${f4(ou[0] - o0[0])} ${f4(ou[1] - o0[1])} ${f4(ov[0] - o0[0])} ${f4(ov[1] - o0[1])} ${n1(o0[0])} ${n1(o0[1])})">926</text>`);
-      const ph = ring(142.5, -452, 8.5, 8.5, 16); F(poly(ph.slice(0, 17), 0), 'f3'); pushK('k', outline(ph, K3, .5, .3));
-      F(poly(ring(142.5, -452, 3.6, 3.6, 12, 1).slice(0, 13), 0), 'dk');
-      // 열린 동안에는 도어락이 문짝에 붙어 같이 돈다 (닫혀 있을 때는 따로 누르는 도어락이 위에 있다)
-      if (!shut) {
-        const lk = [P(212, -412), P(264, -412), P(264, -286), P(212, -286)]; F(poly(lk), 'f3'); PL(lk, K2);
-        F(poly([P(219, -399), P(257, -399), P(257, -321), P(219, -321)], 0), 'dk');
-        X(`<path class="led" d="${poly(ring(238, -304, 5, 5, 12, 1).slice(0, 13), 0)}"/>`);
-      }
-      // 손잡이
-      const lv = [P(240, -262), P(186, -259), P(180, -255), P(186, -250), P(240, -249)]; F(poly(lv), 'f0');
-      LP(lv[0], lv[1], K2); LP(lv[3], lv[4], K2); pushK('k', outline([lv[1], lv[2], lv[3]], K2));
-      const ro = ring(240, -255.5, 13, 13, 20); F(poly(ro.slice(0, 21), 0), 'f0'); pushK('k', outline(ro, K2, .5, .3));
-    });
+  /* 문짝 — 손그림 두 장(닫힘 · 58도 열림 · 손잡이와 열린 쪽 도어락은 그림에 있다). 왼쪽 경첩(x = 0)에 붙어 있다.
+     열리는 동안에는 닫힌 문이 경첩 쪽으로 좁아지며 사라지고, 열린 문이 넓은 데서 제자리로 좁혀지며 나타난다. e = 0(닫힘)~1(열림) */
+  const DOOR_HY = -316;   // 문 높이 가운데 — 열린 문을 키우고 줄일 때 위아래로 고르게
+  function doorPose(e) {
+    const a = 1 - e, f = v => v.toFixed(3), m = (sx, sy) => `matrix(${f(sx)} 0 0 ${f(sy)} 0 ${n1(DOOR_HY * (1 - sy))})`;
+    return [[m(1 + .67 * a, 1 - .16 * a), f(Math.min(1, e * 2.2))], [m(1 - .4 * e, 1), f(Math.max(0, 1 - e * 1.6))]];
+  }
+  function doorPic(e) {
+    const shut = PIC('door', -2, -632.5, 289, 630.5), open = PIC('door-open', -0.5, -665.5, 173, 751.5);
+    if (e <= 0) return shut;
+    if (e >= 1) return open;
+    const [o, c] = doorPose(e);
+    return `<g class="dp-o" transform="${o[0]}" opacity="${o[1]}">${open}</g><g class="dp-c" transform="${c[0]}" opacity="${c[1]}">${shut}</g>`;
   }
 
+  /* 도어락 — 손그림. 불빛 점(원본 59, 215px)에 코드 점을 얹어 번호가 맞으면 초록 · 틀리면 빨강으로 바꾼다 */
   function gKeypad() {
-    reseed('keypad'); VX = 142.5;
-    return O('keypad', '도어락', [196, -436, 84, 180], layer(() => {
-      F(rrD(218, -404, 52, 126, 11), 'sh');
-      RRD(212, -412, 52, 126, 11, K2, 'f3');
-      RRD(219, -399, 38, 78, 6, K3, 'dk');
-      for (let r = 0; r < 4; r++) for (let c = 0; c < 3; c++) F(rrD(225 + c * 10, -390 + r * 17, 6, 6, 1.6), 's1');
-      X('<circle class="led" cx="238" cy="-304" r="5"/>');
-      EL(238, -304, 5.5, 5.5, 1.2);
-      L(224, -293, 252, -293, 1.1, { soft: true });
-    }));
+    return O('keypad', '도어락', [196, -420, 84, 142], PIC('keypad', 208.5, -407.5, 59.5, 117) + '<circle class="led" cx="238" cy="-300.3" r="6.5"/>');
   }
 
+  /* 선물 상자 — 손그림 몸통 · 리본 달린 뚜껑 · 올라오는 카드. 카드는 상자 앞면 윗선(rim · 원본 57px) 아래로 숨겨 두었다가 올라온다.
+     세로 화면은 판이 좁아 상자를 왼쪽으로 조금 당겼다 */
   function gGift() {
-    reseed('gift'); VX = 142.5;
-    const gx = W(430, 352), gw = 150, gh = 112, z0 = 40, z1 = 150, cx = gx + gw / 2, zm = (z0 + z1) / 2;
-    const shade = layer(() => { HT(poly([pj(gx - 10, 0, z0 - 8), pj(gx + gw + 30, 0, z0 - 8), pj(gx + gw + 34, 0, z1 + 14), pj(gx - 12, 0, z1 + 14)], 0), 22, 6); });
-    const body = layer(() => {
-      box3(gx, -gh, gw, gh, z0, z1, { ff: 's1', fs: 's2', ft: 'dk' });
-      const inn = [pj(gx + 6, -gh, z0 + 6), pj(gx + gw - 6, -gh, z0 + 6), pj(gx + gw - 6, -gh, z1 - 6), pj(gx + 6, -gh, z1 - 6)];
-      F(poly(inn, 0), 's3'); F(poly([inn[0], inn[1], [inn[1][0], inn[1][1] + 10], [inn[0][0], inn[0][1] + 10]], 0), 'dk');
-      const P = (X, Y) => pj(X, Y, z1), r = [P(cx - 11, -gh), P(cx + 11, -gh), P(cx + 11, 0), P(cx - 11, 0)];
-      F(poly(r), 's3'); LP(r[0], r[3], K3); LP(r[1], r[2], K3);
-      const s = [pj(gx, -gh, zm - 11), pj(gx, -gh, zm + 11), pj(gx, 0, zm + 11), pj(gx, 0, zm - 11)];
-      F(poly(s), 's3'); LP(s[0], s[3], K3); LP(s[1], s[2], K3);
-    });
-    const card = layer(() => {
-      const c = pj(cx, -gh - 18, zm); RR(c[0], c[1], 92, 62, -2, K2, 'f0');
-      TX(c[0], c[1] - 4, 'PRESS', 16, { anchor: 'middle', rot: -2, ls: 1 }); TX(c[0], c[1] + 16, 'KIT', 16, { anchor: 'middle', rot: -2, ls: 1 });
-    }, 'gift-card');
-    const lid = layer(() => {
-      box3(gx - 8, -gh - 28, gw + 16, 28, z0 - 8, z1 + 8, { ff: 's1', ft: 's1', fs: 's2' });
-      const P = (X, Y) => pj(X, Y, z1 + 8), r = [P(cx - 11, -gh - 28), P(cx + 11, -gh - 28), P(cx + 11, -gh), P(cx - 11, -gh)];
-      F(poly(r), 's3'); LP(r[0], r[3], K3); LP(r[1], r[2], K3);
-      const t1 = [pj(cx - 11, -gh - 28, z0 - 8), pj(cx + 11, -gh - 28, z0 - 8), pj(cx + 11, -gh - 28, z1 + 8), pj(cx - 11, -gh - 28, z1 + 8)];
-      F(poly(t1), 's3'); LP(t1[0], t1[3], K3); LP(t1[1], t1[2], K3);
-      const t2 = [pj(gx - 8, -gh - 28, zm - 11), pj(gx + gw + 8, -gh - 28, zm - 11), pj(gx + gw + 8, -gh - 28, zm + 11), pj(gx - 8, -gh - 28, zm + 11)];
-      F(poly(t2), 's3'); LP(t2[0], t2[1], K3); LP(t2[3], t2[2], K3);
-      // 꼬리표
-      const tg = P(cx + 30, -gh + 8); CV(`M${n1(r[1][0] - 2)} ${n1(r[1][1] + 30)} Q${n1(tg[0] - 6)} ${n1(tg[1] - 8)} ${n1(tg[0])} ${n1(tg[1])}`, 1.2);
-      const R = RR(tg[0] + 22, tg[1] + 18, 54, 26, 9, K3, 'f0'); TX(tg[0] + 22, tg[1] + 22, 'PRESS KIT', 10, { anchor: 'middle', rot: 9 });
-      void R;
-    }, 'gift-lid');
-    const bow = layer(() => {
-      const b = pj(cx, -gh - 28, zm), Bp = (dx, dy) => n1(b[0] + dx) + ' ' + n1(b[1] + dy);
-      CV(`M${Bp(0, 0)} C${Bp(-26, -36)} ${Bp(-58, -26)} ${Bp(-50, -8)} C${Bp(-44, 4)} ${Bp(-18, 4)} ${Bp(0, 0)}Z`, K2, { fill: 's3', closed: true });
-      CV(`M${Bp(0, 0)} C${Bp(26, -36)} ${Bp(58, -26)} ${Bp(50, -8)} C${Bp(44, 4)} ${Bp(18, 4)} ${Bp(0, 0)}Z`, K2, { fill: 's3', closed: true });
-      CV(`M${Bp(-30, -14)} Q${Bp(-20, -10)} ${Bp(-8, -4)}`, 1.2, { soft: true }); CV(`M${Bp(30, -14)} Q${Bp(20, -10)} ${Bp(8, -4)}`, 1.2, { soft: true });
-      EL(b[0], b[1] - 1, 10, 7, K2, 's3');
-    }, 'gift-bow');
+    const cx = W(533, 438), bx = cx - 111, by = -106, rim = by + 28.5, cid = 'gc' + (++UID);
+    const card = `<clipPath id="${cid}"><rect x="${bx - 60}" y="${rim - 400}" width="380" height="400"/></clipPath>`
+      + `<g clip-path="url(#${cid})"><g class="gift-card">${PIC('gift-card', cx - 66.8, rim - 67, 133.5, 93)}</g></g>`;
+    const lid = `<g class="gift-lid">${PIC('gift-lid', cx - 109.3, rim - 74, 218.5, 80.5)}</g>`;
     const CONF = ['var(--s1)', 'var(--s2)', 'var(--s3)', 'var(--ink)', 'var(--a3)'];
-    const top = pj(cx, -gh - 30, zm);
+    const top = [cx, rim - 20];
     const conf = Array.from({ length: 18 }, (_, i) => {
       const a = -Math.PI * (.06 + .88 * i / 17), d = 120 + (i * 37) % 90;
       const dx = Math.round(Math.cos(a) * d), dy = Math.round(Math.sin(a) * d - 30);
       return `<rect class="conf" x="${n1(top[0] - 4)}" y="${n1(top[1] - 7)}" width="8" height="14" rx="2" style="fill:${CONF[i % 5]};--dx:${dx}px;--dy:${dy}px;--r:${(i % 2 ? 1 : -1) * (160 + i * 25)}deg;animation-delay:${(i % 5) * .03}s"/>`;
     }).join('');
-    return O('presskit', 'PRESS KIT', [gx - 30, -gh - 96, gw + 70, gh + 130], shade + body + card + lid + bow + conf);
+    return O('presskit', 'PRESS KIT', [bx - 8, rim - 90, 240, 152 - rim], PIC('gift', bx, by, 253.5, 162) + card + lid + conf);
   }
 
   /* 현관벽 손그림 — 넓은 화면 판(1600×1000)을 두 배로 그린 한 장. 판 밖은 가장자리를 거울처럼 뒤집어 잇는다.
      바닥은 아래로 길게 보일 수 있어 걸레받이 아래 바닥 띠만 뒤집어 이어 붙인다 (2026-10-25) */
-  const PORCH_WALL = '/room/porch-wall.webp?v=1';
+  const PORCH_WALL = '/room/porch-wall.webp?v=2';
+  // 현관 손그림 한 장 — public/room/porch-<이름>.webp. 람호 원본은 화면 좌표의 두 배 크기라 가로 · 세로를 절반으로 놓는다
+  const PIC = (name, x, y, w, h, cls) => `<image${cls ? ` class="${cls}"` : ''} href="/room/porch-${name}.webp?v=1" x="${n1(x)}" y="${n1(y)}" width="${w}" height="${h}" preserveAspectRatio="none"/>`;
+  new Image().src = '/room/porch-door-open.webp?v=1';   // 열린 문은 처음에 숨어 있어 문이 열리는 순간 비지 않게 미리 받아 둔다
   function porchWall() {
     const X0 = -657.5, Y0 = -790, PW = 1600, PH = 1000, fa = 6, fb = 210, fh = fb - fa;
     const img = (sx, ex, sy, ey, clip) => `<image href="${PORCH_WALL}" x="${X0}" y="${Y0}" width="${PW}" height="${PH}" preserveAspectRatio="none" transform="matrix(${sx} 0 0 ${sy} ${ex} ${ey})"${clip ? ' clip-path="url(#pw-floor)"' : ''}/>`;
@@ -1374,8 +1305,13 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--hand);over
     S.door = 'opening'; sync();
     // 화면 그리기 박자가 느린 곳(뒤에 숨은 탭 · 작은 창)에서도 문이 끝까지 열리도록 시간이 차면 끝 장면으로 마무리한다
     const t0 = performance.now(), dur = 640; let fin = false;
-    const finish = () => { if (fin) return; fin = true; g.innerHTML = doorPanel(DOOR_OPEN); done(); };
-    const step = now => { if (fin) return; const t = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - t, 3); g.innerHTML = doorPanel(DOOR_OPEN * e); if (t < 1) requestAnimationFrame(step); else finish(); };
+    const finish = () => { if (fin) return; fin = true; g.innerHTML = doorPic(1); done(); };
+    g.innerHTML = doorPic(.001); const po = g.querySelector('.dp-o'), pc = g.querySelector('.dp-c');
+    const step = now => {
+      if (fin) return; const t = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - t, 3), [o, c] = doorPose(Math.max(.001, e));
+      po.setAttribute('transform', o[0]); po.setAttribute('opacity', o[1]); pc.setAttribute('transform', c[0]); pc.setAttribute('opacity', c[1]);
+      if (t < 1) requestAnimationFrame(step); else finish();
+    };
     requestAnimationFrame(step); setTimeout(finish, dur + 120);
   }
   function turn(dir) { S.wall = (S.wall + dir + 4) % 4; SFX.step(); sync(); }
