@@ -84,8 +84,8 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--hand);over
 [data-mail=open] .mail-lid{transform:scaleY(0)}
 .mail-lid-open{transform-origin:50% 100%;transform:scaleY(0);transition:transform .35s .14s cubic-bezier(.3,1.5,.5,1)}
 [data-mail=open] .mail-lid-open{transform:none}
-.mail-paper{opacity:0;transform:translateY(70px);transition:transform .45s .1s cubic-bezier(.3,1.3,.5,1),opacity .2s .1s}
-[data-mail=open] .mail-paper{opacity:1;transform:translateY(30px)}
+.mail-paper{opacity:0;transform:translateY(105%);transition:transform .45s .2s cubic-bezier(.3,1.3,.5,1),opacity .2s .2s}
+[data-mail=open] .mail-paper{opacity:1;transform:none}
 
 /* 선물 상자 */
 .gift-lid{transform-origin:0% 100%;transition:transform .45s cubic-bezier(.3,1.6,.5,1)}
@@ -104,8 +104,6 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--hand);over
 [data-door=open] .door-open,[data-door=opening] .door-open{display:inline}
 [data-door=open] .door-closed,[data-door=opening] .door-closed{display:none}
 [data-door=opening] [data-obj=keypad]{opacity:0;pointer-events:none;transition-duration:.1s}   /* 열리는 문간 위에 떠 보이지 않게 빨리 */
-.door-fly{opacity:0;transition:opacity .35s .3s}
-[data-door=open] .door-fly{opacity:1}
 .rattle{animation:rattle .38s ease-in-out}
 @keyframes rattle{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
 .led{fill:transparent;transition:fill .2s}   /* 평소에는 손그림의 파란 점이 그대로 보인다 */
@@ -527,15 +525,19 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--hand);over
 
   /* 우편함 — 손그림 몸통 · 덮개 두 장(닫힘 · 열림). 덮개 자리는 람호 참고 그림 두 장에 겹쳐 맞춘 값(원본 픽셀 ÷ 2).
      예전 우편함보다 세로로 길어 가운데는 예전 자리에 두고, 아랫변이 아래 띠 선(-328)에 닿지 않게 올렸다 */
+  /* 주문서 종이 — 덮개가 열린 아래 칸에서 올라온다(위 투입구는 편지를 넣는 곳이다 · 람호 2026-10-25).
+     람호가 손그림을 그리는 중이라 그림이 오기 전에는 종이를 안 내보낸다 — 오면 ['이름', 원본 가로, 원본 세로] 를 넣는다 */
+  const MAIL_PAPER = null;
   function gMailbox() {
-    reseed('mailbox');
-    const x = W(-375, -253), y = -541, cx = x + 80.5, sy = y + 33, cid = 'mc' + (++UID);   // cx · sy = 위 투입구 가운데
-    // 주문서 — 위 투입구로 빼꼼 고개만 내민다 (코드 그림 · 손그림 종이가 오면 바꾼다)
-    const paper = layer(() => { const R = RR(cx, sy - 24, 58, 78, 4, K3, 'f0'); for (let i = 0; i < 2; i++) scrib(cx - 18, sy - 52 + i * 10, i ? 22 : 34, R); }, 'mail-paper');
-    const clip = `<clipPath id="${cid}"><rect x="${x}" y="${sy - 260}" width="182" height="260"/></clipPath>`;
-    return O('mailbox', '우편함', [x - 2, y - 10, 178, 208], PIC('mailbox', x, y, 181.5, 197.5)
-      + PIC('mail-lid', x + 26.3, y + 101.4, 106.5, 73.5, 'mail-lid') + PIC('mail-lid-open', x + 1.5, y + 118.6, 127.5, 56.5, 'mail-lid-open')
-      + clip + `<g clip-path="url(#${cid})">${paper}</g>`);
+    const x = W(-375, -253), y = -541, hy = y + 175, cid = 'mc' + (++UID);   // hy = 아래 칸 아랫변(덮개 경첩)
+    let paper = '';
+    if (MAIL_PAPER) {
+      const [pn, pw, ph] = MAIL_PAPER, w = pw / 2, h = ph / 2;
+      paper = `<clipPath id="${cid}"><rect x="${x - 40}" y="${hy - 400}" width="260" height="400"/></clipPath>`
+        + `<g clip-path="url(#${cid})"><g class="mail-paper">${PIC(pn, x + 79.8 - w / 2, hy - 8 - h, w, h)}</g></g>`;
+    }
+    return O('mailbox', '우편함', [x - 2, y - 10, 178, 208], PIC('mailbox', x, y, 181.5, 197.5) + paper
+      + PIC('mail-lid', x + 26.3, y + 101.4, 106.5, 73.5, 'mail-lid') + PIC('mail-lid-open', x + 1.5, y + 118.6, 127.5, 56.5, 'mail-lid-open'));
   }
 
   function gDoor() {
@@ -555,17 +557,6 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--hand);over
       F(poly([[150, -6], [285, -6], [285, 0], [150, 0]], 0), 'f3');
     });
     const door = O('door', '926호 문', [0, -630, 285, 630], doorway + `<g class="door-closed">${doorPic(0)}</g><g class="door-open">${doorPic(1)}</g>`, true);
-    const fly = layer(() => {
-      const d = 'M246 -598 C 286 -600 300 -626 330 -630 C 360 -634 352 -606 334 -612 C 318 -618 340 -660 384 -668 C 412 -673 430 -690 444 -712';
-      const pts = curvePts(d, { step: 4, j: .2 }); for (let i = 0; i + 3 < pts.length; i += 5) pushK('k2', outline(pts.slice(i, i + 3), 2));
-      const R = rot(456, -724, -24), B = (dx, dy) => R(456 + dx, -724 + dy);
-      const wing = (pts, c) => { const d = 'M' + pts.map(p => n1(B(...p)[0]) + ' ' + n1(B(...p)[1])).join('L') + 'Z'; CV(d, K3, { fill: c, closed: true, step: 3 }); };
-      wing([[0, 0], [-8, -14], [-20, -22], [-30, -18], [-30, -8], [-18, 0]], 's2');
-      wing([[0, 0], [8, -14], [20, -22], [30, -18], [30, -8], [18, 0]], 's2');
-      wing([[0, 2], [-10, 6], [-18, 16], [-12, 22], [-4, 14]], 's3');
-      wing([[0, 2], [10, 6], [18, 16], [12, 22], [4, 14]], 's3');
-      LP(B(0, -10), B(0, 16), K2); CV(`M${B(-1, -10).map(n1).join(' ')} Q${B(-6, -22).map(n1).join(' ')} ${B(-10, -26).map(n1).join(' ')}`, 1.3); CV(`M${B(1, -10).map(n1).join(' ')} Q${B(6, -22).map(n1).join(' ')} ${B(10, -26).map(n1).join(' ')}`, 1.3);
-    }, 'door-fly deco');
     // 매트와 예비 열쇠
     const key = O('key', '예비 열쇠', [80, 6, 160, 50], layer(() => {
       const c = pj(128, 0, 96); EL(c[0], c[1], 13, 9, K2, 's2'); EL(c[0], c[1], 5, 3.5, 1.2, 'floor');
@@ -583,7 +574,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--hand);over
       for (let i = 0; i < 46; i++) { const u = rr(.05, .95), v = rr(.08, .92), p = [a[0] + (b[0] - a[0]) * u + (d[0] - a[0]) * v, a[1] + (d[1] - a[1]) * v]; L(p[0], p[1], p[0] + rr(-1, 1), p[1] + rr(3, 5), 1, { soft: true, ov: 0 }); }
     }, 'mat-body'));
     // 매트를 문보다 먼저 그린다 — 열린 문짝이 매트 위를 지나간다
-    return frame + key + mat + door + fly;
+    return frame + key + mat + door;
   }
 
   /* 문짝 — 손그림 두 장(닫힘 · 58도 열림 · 손잡이와 열린 쪽 도어락은 그림에 있다). 왼쪽 경첩(x = 0)에 붙어 있다.
