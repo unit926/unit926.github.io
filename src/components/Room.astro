@@ -698,9 +698,24 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--hand);over
     return O('presskit', 'PRESS KIT', [gx - 30, -gh - 96, gw + 70, gh + 130], shade + body + card + lid + bow + conf);
   }
 
+  /* 현관벽 손그림 — 넓은 화면 판(1600×1000)을 두 배로 그린 한 장. 판 밖은 가장자리를 거울처럼 뒤집어 잇는다.
+     바닥은 아래로 길게 보일 수 있어 걸레받이 아래 바닥 띠만 뒤집어 이어 붙인다 (2026-10-25) */
+  const PORCH_WALL = '/room/porch-wall.webp?v=1';
+  function porchWall() {
+    const X0 = -657.5, Y0 = -790, PW = 1600, PH = 1000, fa = 6, fb = 210, fh = fb - fa;
+    const img = (sx, ex, sy, ey, clip) => `<image href="${PORCH_WALL}" x="${X0}" y="${Y0}" width="${PW}" height="${PH}" preserveAspectRatio="none" transform="matrix(${sx} 0 0 ${sy} ${ex} ${ey})"${clip ? ' clip-path="url(#pw-floor)"' : ''}/>`;
+    const cols = [[-1, 2 * X0], [1, 0], [-1, 2 * (X0 + PW)]];
+    let o = `<clipPath id="pw-floor"><rect x="${X0 - 1}" y="${fa}" width="${PW + 2}" height="${fh}"/></clipPath>`;
+    for (const [sx, ex] of cols) {
+      o += img(sx, ex, -1, 2 * Y0) + img(sx, ex, 1, 0);
+      for (let k = 1; k <= 4; k++) o += k % 2 ? img(sx, ex, -1, 2 * (fb + (k - 1) * fh), true) : img(sx, ex, 1, k * fh, true);
+    }
+    return `<g class="deco">${o}</g>`;
+  }
   function porch() {
     const at = wide ? [657.5, 790, 1] : [293.25, 1150, 1.1];
-    return `<g transform="translate(${at[0]} ${at[1]}) scale(${at[2]})">${corridor()}${gMailbox()}${gDoor()}${gKeypad()}${gGift()}</g>`;
+    const back = PORCH_WALL ? (corridor(), porchWall()) : corridor();   // 코드 복도 그림은 남겨 둔다 — PORCH_WALL 을 '' 로 비우면 돌아온다
+    return `<g transform="translate(${at[0]} ${at[1]}) scale(${at[2]})">${back}${gMailbox()}${gDoor()}${gKeypad()}${gGift()}</g>`;
   }
 
   /* ═════════ 방 — 926호 안 작업하는 방 ═════════
@@ -1250,17 +1265,22 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--hand);over
   let toastT = 0;
   function toast(msg) { toastEl.textContent = msg; toastEl.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => toastEl.classList.remove('on'), 1900); }
   function tipAt(text, x, y) { tip.textContent = text; tip.style.left = x + 'px'; tip.style.top = y + 'px'; tip.classList.add('on'); }
-  function hideTip() { tip.classList.remove('on'); }
+  let tipObj = null;
+  function hideTip() { tipObj = null; tip.classList.remove('on'); }
+  // 이름표는 마우스를 따라가지 않고 물건 위 가운데에 선다 — 키보드로 고를 때와 같은 자리 (2026-10-25)
+  function tipOver(o) {
+    const a = o.querySelector('.hit').getBoundingClientRect(), r = stage.getBoundingClientRect();
+    tipAt(o.getAttribute('aria-label'), a.left + a.width / 2 - r.left, a.top - r.top + 6);
+  }
   svg.addEventListener('pointermove', e => {
     if (e.pointerType !== 'mouse' || veil) return;
     const o = e.target.closest('[data-obj]'); if (!o) { hideTip(); return; }
-    const r = stage.getBoundingClientRect(); tipAt(o.getAttribute('aria-label'), e.clientX - r.left, e.clientY - r.top);
+    if (o !== tipObj) { tipOver(o); tipObj = o; }
   });
   svg.addEventListener('pointerleave', hideTip);
   svg.addEventListener('focusin', e => {
     const o = e.target.closest('[data-obj]'); if (!o || veil) return;
-    const a = o.querySelector('.hit').getBoundingClientRect(), r = stage.getBoundingClientRect();
-    tipAt(o.getAttribute('aria-label'), a.left + a.width / 2 - r.left, a.top - r.top + 6);
+    tipOver(o);
   });
   svg.addEventListener('focusout', hideTip);
 
