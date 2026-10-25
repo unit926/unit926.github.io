@@ -549,15 +549,10 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--hand);over
     // 매트 손그림 세 장(한 캔버스) — 본체는 늘 깔려 있고, 누르는 것은 왼쪽 아래 모서리뿐이다. 덮인 모서리 ↔ 젖혀진 모서리
     const MX = -43.2, MY = -5.8, MW = 372.5, MH = 72.5;
     const matBody = `<g class="deco">${PIC('mat', MX, MY, MW, MH)}</g>`;
-    // 누르는 범위는 휴대폰에서도 손가락으로 누를 만하게 그림보다 넉넉히
-    const mat = O('mat', '현관 매트', [MX - 14, MY - 8, 90, 90], PIC('mat-flat', MX, MY, MW, MH, 'mat-flat') + PIC('mat-up', MX, MY, MW, MH, 'mat-up'));
-    // 예비 열쇠 — 젖힌 모서리 밑(람호 사진의 빨간 점 · 원본 42, 102px). 손그림 열쇠가 오기 전까지는 예전 코드 열쇠를 줄여 둔다
-    const key = O('key', '예비 열쇠', [MX + 2, MY + 36, 40, 30], `<g transform="translate(${n1(MX + 21)} ${n1(MY + 51)}) scale(.3) translate(-163 -30.8)">${layer(() => {
-      const c = pj(128, 0, 96); EL(c[0], c[1], 13, 9, K2, 's2'); EL(c[0], c[1], 5, 3.5, 1.2, 'floor');
-      const e = pj(208, 0, 96); F(poly([[c[0] + 12, c[1] - 3], [e[0], e[1] - 3], [e[0], e[1] + 3], [c[0] + 12, c[1] + 3]]), 's2');
-      L(c[0] + 12, c[1] - 3, e[0], e[1] - 3, K3); L(c[0] + 12, c[1] + 3, e[0], e[1] + 3, K3);
-      PL([[e[0] - 18, e[1] + 3], [e[0] - 18, e[1] + 10], [e[0] - 10, e[1] + 10], [e[0] - 8, e[1] + 3]], K3, false);
-    })}</g>`);
+    // 누르는 범위는 휴대폰에서도 손가락으로 누를 만하게 그림보다 넉넉히 · 마우스를 올려도 뜨지 않는다(람호 2026-10-25)
+    const mat = O('mat', '현관 매트', [MX - 14, MY - 8, 90, 90], PIC('mat-flat', MX, MY, MW, MH, 'mat-flat') + PIC('mat-up', MX, MY, MW, MH, 'mat-up'), true);
+    // 예비 열쇠 손그림(253×183px) — 젖힌 모서리 밑, 람호 사진의 빨간 점(원본 42, 102px · 지름 화면 26.5)에 가운데를 맞추고 가로 34로 줄였다
+    const key = O('key', '예비 열쇠', [MX + 2, MY + 36, 40, 30], PIC('key', MX + 21 - 17, MY + 51 - 12.3, 34, 24.6));
     // 매트를 문보다 먼저 그린다 — 열린 문짝이 매트 위를 지나간다. 열쇠는 젖힌 모서리 위에서 눌려야 해서 매트 뒤에 그린다
     return frame + matBody + mat + key + door;
   }
@@ -585,10 +580,11 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--hand);over
   /* 선물 상자 — 손그림 몸통 · 리본 달린 뚜껑 · 올라오는 카드. 카드는 상자 앞면 윗선(rim · 원본 57px) 아래로 숨겨 두었다가 올라온다.
      세로 화면은 판이 좁아 상자를 왼쪽으로 조금 당겼다 */
   function gGift() {
-    const cx = W(533, 438), bx = cx - 111, by = -106, rim = by + 28.5, cid = 'gc' + (++UID);
+    // 몸통 그림(516×328) 속 상자는 원본 35~426 · 5~314px — 상자가 예전 자리에 서게 그만큼 당겨 놓았다. 앞면 윗선은 원본 56px
+    const cx = W(533, 438), bx = cx - 115.5, by = -107.5, rim = by + 28, cid = 'gc' + (++UID);
     const card = `<clipPath id="${cid}"><rect x="${bx - 60}" y="${rim - 400}" width="380" height="400"/></clipPath>`
       + `<g clip-path="url(#${cid})"><g class="gift-card">${PIC('gift-card', cx - 66.8, rim - 67, 133.5, 93)}</g></g>`;
-    const lid = `<g class="gift-lid">${PIC('gift-lid', cx - 109.3, rim - 74, 218.5, 80.5)}</g>`;
+    const lid = `<g class="gift-lid">${PIC('gift-lid', cx - 109.3, rim - 72, 218.5, 80.5)}</g>`;
     const CONF = ['var(--s1)', 'var(--s2)', 'var(--s3)', 'var(--ink)', 'var(--a3)'];
     const top = [cx, rim - 20];
     const conf = Array.from({ length: 18 }, (_, i) => {
@@ -603,7 +599,8 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--hand);over
      바닥은 아래로 길게 보일 수 있어 걸레받이 아래 바닥 띠만 뒤집어 이어 붙인다 (2026-10-25) */
   const PORCH_WALL = '/room/porch-wall.webp?v=2';
   // 현관 손그림 한 장 — public/room/porch-<이름>.webp. 람호 원본은 화면 좌표의 두 배 크기라 가로 · 세로를 절반으로 놓는다
-  const PIC = (name, x, y, w, h, cls) => `<image${cls ? ` class="${cls}"` : ''} href="/room/porch-${name}.webp?v=1" x="${n1(x)}" y="${n1(y)}" width="${w}" height="${h}" preserveAspectRatio="none"/>`;
+  const PIC_V = { gift: 2, 'mail-letter': 2, doorframe: 2 };   // 같은 이름으로 그림을 바꾸면 여기 판을 올려 브라우저가 새로 받게 한다
+  const PIC = (name, x, y, w, h, cls) => `<image${cls ? ` class="${cls}"` : ''} href="/room/porch-${name}.webp?v=${PIC_V[name] || 1}" x="${n1(x)}" y="${n1(y)}" width="${w}" height="${h}" preserveAspectRatio="none"/>`;
   new Image().src = '/room/porch-door-open.webp?v=1';   // 열린 문은 처음에 숨어 있어 문이 열리는 순간 비지 않게 미리 받아 둔다
   function porchWall() {
     const X0 = -657.5, Y0 = -790, PW = 1600, PH = 1000, fa = 6, fb = 210, fh = fb - fa;
