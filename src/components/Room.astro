@@ -182,18 +182,18 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--hand);over
 .toast.on{opacity:1;transform:translate(-50%,0)}
 
 /* ── 뜨는 종이 ── */
-.veil{position:absolute;inset:0;z-index:6;background:linear-gradient(90deg,transparent 38%,var(--veil) 72%);animation:veil-in .3s ease both}
-.tall .veil{background:linear-gradient(180deg,transparent 30%,var(--veil) 62%)}
-.veil.plain{background:var(--veil)}
+/* 가림막 — 물건 둘레만 밝게 남기는 모양은 다가갈 때 스크립트가 얹는다(focusOn). 물건 없이 뜨는 종이는 고르게 가린다 */
+.veil{position:absolute;inset:0;z-index:6;background:var(--veil);animation:veil-in .3s ease both}
 @keyframes veil-in{from{opacity:0}}
-.sheet{position:absolute;right:max(28px,6vw);top:50%;width:min(420px,calc(100% - 56px));max-height:calc(100% - 64px);overflow:auto;overscroll-behavior:contain;
-  padding:32px 30px 28px;background:var(--sheet);color:var(--ink);border-radius:5px;word-break:keep-all;overflow-wrap:break-word;
-  font-size:16px;line-height:1.7;box-shadow:0 1px 1px rgba(0,0,0,.05),0 26px 60px -14px rgba(30,20,10,.38),0 10px 22px -12px rgba(30,20,10,.28);
+/* 종이 크기 · 글자는 화면을 따라 커진다 — 안쪽 크기는 em으로 적어 글자 크기 하나로 함께 움직인다 */
+.sheet{position:absolute;right:max(28px,6vw);top:50%;width:min(26.25em,calc(100% - 56px));max-height:calc(100% - 64px);overflow:auto;overscroll-behavior:contain;
+  padding:2em 1.875em 1.75em;background:var(--sheet);color:var(--ink);border-radius:5px;word-break:keep-all;overflow-wrap:break-word;
+  font-size:clamp(16px,min(1.15vw,2.1vh),24px);line-height:1.7;box-shadow:0 1px 1px rgba(0,0,0,.05),0 26px 60px -14px rgba(30,20,10,.38),0 10px 22px -12px rgba(30,20,10,.28);
   transform:translateY(-50%) rotate(-.6deg);animation:sheet-in .42s cubic-bezier(.2,.9,.25,1.05) both}
 .veil.plain .sheet{right:50%;transform:translate(50%,-50%) rotate(-.6deg);animation-name:sheet-in-c}
 @keyframes sheet-in{from{opacity:0;transform:translate(26px,-50%) rotate(2deg)}}
 @keyframes sheet-in-c{from{opacity:0;transform:translate(50%,calc(-50% + 22px)) rotate(2deg)}}
-.tall .sheet,.tall .veil.plain .sheet{left:12px;right:12px;top:auto;bottom:max(12px,env(safe-area-inset-bottom));width:auto;max-height:60%;transform:none;border-radius:16px 16px 10px 10px;animation-name:sheet-up;padding:28px 22px 22px}
+.tall .sheet,.tall .veil.plain .sheet{left:12px;right:12px;top:auto;bottom:max(12px,env(safe-area-inset-bottom));width:auto;max-height:60%;transform:none;border-radius:16px 16px 10px 10px;animation-name:sheet-up;padding:28px 22px 22px;font-size:16px}
 @keyframes sheet-up{from{opacity:0;transform:translateY(40px)}}
 .sheet.out{animation:sheet-out .18s ease-in forwards}
 @keyframes sheet-out{to{opacity:0;transform:translateY(-50%) translateX(16px) rotate(1deg)}}
@@ -203,8 +203,8 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--hand);over
   clip-path:polygon(0 8%,6% 0,12% 10%,20% 2%,30% 9%,42% 1%,55% 8%,66% 0,78% 9%,88% 2%,100% 9%,98% 92%,90% 100%,80% 91%,68% 100%,56% 92%,44% 100%,32% 91%,20% 100%,10% 92%,2% 100%)}
 .tall .sheet::before{top:9px;width:42px;height:5px;margin-left:-21px;border-radius:3px;background:color-mix(in srgb,var(--ink) 22%,transparent);transform:none;clip-path:none}
 .sheet:focus{outline:none}
-.sheet h3{font-weight:700;font-size:26px;line-height:1.25;margin:0 48px 2px 0;text-wrap:balance;letter-spacing:-.01em}
-.sheet .sub{margin:0;color:var(--ink-soft);font-size:15px}
+.sheet h3{font-weight:700;font-size:1.625em;line-height:1.25;margin:0 48px 2px 0;text-wrap:balance;letter-spacing:-.01em}
+.sheet .sub{margin:0;color:var(--ink-soft);font-size:.9375em}
 .sheet .rule{height:9px;margin:14px 0 12px;background:var(--s2);opacity:.85;
   -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 9' preserveAspectRatio='none'%3E%3Cpath d='M1 5 C 14 2, 26 7, 40 4.5 S 66 2.5, 80 5 S 106 6.5, 119 3.5' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E") center/100% 100% no-repeat;
   mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 9' preserveAspectRatio='none'%3E%3Cpath d='M1 5 C 14 2, 26 7, 40 4.5 S 66 2.5, 80 5 S 106 6.5, 119 3.5' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E") center/100% 100% no-repeat;width:120px}
@@ -214,14 +214,14 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--hand);over
 .sheet ul.list{margin:4px 0 0;padding-left:20px} .sheet ul.list li{margin:3px 0}
 .links{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
 .links.col{flex-direction:column;align-items:stretch}
-.go{display:inline-flex;align-items:center;justify-content:space-between;gap:12px;font:15px/1.3 var(--hand);color:var(--hi);background:var(--ink);text-decoration:none;
-  border:0;border-radius:999px;padding:11px 18px;cursor:pointer;transition:transform .15s,background .15s}
-.go::after{content:"↗";font-size:14px;opacity:.75}
+.go{display:inline-flex;align-items:center;justify-content:space-between;gap:.8em;font:.9375em/1.3 var(--hand);color:var(--hi);background:var(--ink);text-decoration:none;
+  border:0;border-radius:999px;padding:.733em 1.2em;cursor:pointer;transition:transform .15s,background .15s}
+.go::after{content:"↗";font-size:.933em;opacity:.75}
 .go.in::after{content:"→"}
 .go:hover{transform:translateY(-1px);background:color-mix(in srgb,var(--ink) 85%,var(--s3))}
 .go.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--ink) 30%,transparent)}
 .go.ghost:hover{box-shadow:inset 0 0 0 1.5px var(--ink);background:transparent}
-.soon{margin-top:18px!important;display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;font-size:14.5px;color:var(--ink-soft);
+.soon{margin-top:18px!important;display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;font-size:.906em;color:var(--ink-soft);
   background:color-mix(in srgb,var(--ink) 6%,transparent)}
 .soon::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--s2)}
 .x{position:absolute;z-index:2;top:14px;right:14px;width:38px;height:38px;border-radius:50%;border:1.5px solid color-mix(in srgb,var(--ink) 18%,transparent);background:transparent;cursor:pointer;color:var(--ink);padding:0;transition:background .15s,border-color .15s}
@@ -230,14 +230,14 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--hand);over
 .x:hover{border-color:var(--ink);background:color-mix(in srgb,var(--ink) 6%,transparent)}
 .shake{animation:rattle .38s ease-in-out}
 .book{display:grid;gap:2px;margin-top:6px;padding:14px 16px;border-radius:8px;background:color-mix(in srgb,var(--s1) 38%,transparent);border-left:4px solid var(--s2)}
-.book b{font-weight:700;font-size:17px} .book span{color:var(--ink-soft);font-size:14px} .book em{font-style:normal;margin-top:4px}
+.book b{font-weight:700;font-size:1.0625em} .book span{color:var(--ink-soft);font-size:.875em} .book em{font-style:normal;margin-top:4px}
 
 /* 도어락 창 */
-.sheet.kp{width:min(340px,calc(100% - 56px));background:#1C1B1A;color:#EEE7DA;padding:30px 26px 26px}
+.sheet.kp{width:min(21.25em,calc(100% - 56px));background:#1C1B1A;color:#EEE7DA;padding:30px 26px 26px}
 .sheet.kp::before{display:none}
 .sheet.kp .x{color:#EEE7DA;border-color:rgba(255,255,255,.18)}
-.sheet.kp h3{font-size:20px;margin-bottom:0}
-.kp .hint{margin:4px 0 18px;color:#B9B0A2;font-size:15px}
+.sheet.kp h3{font-size:1.25em;margin-bottom:0}
+.kp .hint{margin:4px 0 18px;color:#B9B0A2;font-size:.9375em}
 .pad{display:grid;justify-items:center;gap:18px}
 .disp{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;padding:12px 16px;border-radius:10px;background:#0E0E0D;box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
 .digits{font-size:30px;letter-spacing:.38em;color:var(--s1);font-variant-numeric:tabular-nums;text-shadow:0 0 12px color-mix(in srgb,var(--s2) 55%,transparent)}
@@ -259,9 +259,11 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--hand);over
 .receipt table{border-collapse:collapse;margin-top:10px;width:100%}
 .receipt th{text-align:left;font-weight:400;color:#7B7166;padding:8px 14px 8px 0;white-space:nowrap;vertical-align:top}
 .receipt td{padding:8px 0;border-bottom:1.5px dashed #D9D2C6}
-.receipt td b{font-weight:700;font-size:21px}
-.receipt .note{margin-top:16px;color:#7B7166;font-size:14.5px}
-.stamp{position:absolute;right:26px;top:70px;font-weight:700;font-size:17px;color:var(--bad);border:2.5px solid var(--bad);border-radius:50%;width:62px;height:62px;display:grid;place-items:center;transform:rotate(-14deg);opacity:.82}
+.receipt td b{font-weight:700;font-size:1.3125em}
+.receipt .note{margin-top:16px;color:#7B7166;font-size:.906em}
+.stamp{position:absolute;right:1.53em;top:4.12em;font-weight:700;font-size:1.0625em;color:var(--bad);border:2.5px solid var(--bad);border-radius:50%;width:3.65em;height:3.65em;display:grid;place-items:center;transform:rotate(-14deg);opacity:.82}
+/* 세로 화면은 종이가 좁아 도장이 첫 줄 글자를 덮는다 — 제목 오른쪽 빈자리(닫기 단추 왼쪽)로 옮긴다 */
+.tall .stamp{top:12px;right:62px;width:3.3em;height:3.3em}
 
 /* 일기장 */
 .sheet.diary{background-color:var(--sheet);background-image:linear-gradient(90deg,transparent 46px,color-mix(in srgb,var(--bad) 45%,transparent) 46px 47.5px,transparent 47.5px),repeating-linear-gradient(transparent 0 33px,color-mix(in srgb,var(--ink) 12%,transparent) 33px 34px);
@@ -270,13 +272,13 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--hand);over
 .diary-list{list-style:none;margin:10px 0 0;padding:0}
 .diary-list a{display:grid;gap:0;padding:7px 0;color:var(--ink);text-decoration:none}
 .diary-list a:hover b{text-decoration:underline;text-decoration-color:var(--s2);text-decoration-thickness:2px;text-underline-offset:4px}
-.diary-list span{color:var(--ink-soft);font-size:13px;font-variant-numeric:tabular-nums}
-.diary-list b{font-weight:700;font-size:18px}
+.diary-list span{color:var(--ink-soft);font-size:.8125em;font-variant-numeric:tabular-nums}
+.diary-list b{font-weight:700;font-size:1.125em}
 .diary .empty{margin-top:14px}
 
 /* 명함 */
-.sheet.namecard{width:min(400px,calc(100% - 56px));padding:34px 32px 30px}
-.sheet.namecard .who{margin-top:4px;font-size:22px;font-weight:700}
+.sheet.namecard{width:min(25em,calc(100% - 56px));padding:2.125em 2em 1.875em}
+.sheet.namecard .who{margin-top:4px;font-size:1.375em;font-weight:700}
 .sheet.namecard .org{color:var(--ink-soft);letter-spacing:.06em}
 
 /* 컴퓨터 — 모니터로 다가간다 */
@@ -1186,15 +1188,44 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--hand);over
   });
   svg.addEventListener('focusout', hideTip);
 
-  /* ── 다가가기 — 누른 물건 앞으로 다가가고, 옆(휴대폰은 아래)에 종이가 놓인다 ── */
+  /* ── 다가가기 — 누른 물건 앞으로 다가가고, 바로 옆(휴대폰은 아래)에 종이가 놓인다.
+     넓은 화면은 물건과 종이를 한 묶음으로 화면 가운데에 두고, 물건 둘레만 밝게 남긴 채 나머지를 가린다 (2026-10-29) ── */
+  // 확대할 때 같이 화면에 들어와야 하는 것 — 열린 선물 상자의 뚜껑은 위로 날아가 있어 몸통만 맞추면 잘린다
+  const FRAME_EXTRA = { presskit: () => S.gift === 'open' ? '.gift-lid' : '' };
+  function frameOf(o) {
+    const sel = FRAME_EXTRA[o.dataset.obj] ? FRAME_EXTRA[o.dataset.obj]() : '';
+    const extra = sel ? [...o.querySelectorAll(sel)] : [];
+    // 뚜껑이 아직 날아가는 중이면 끝자리로 바로 보내고 잰다 — 느린 화면에서 뚜껑이 빠진 채로 맞춰지지 않게
+    extra.forEach(e => { e.style.transition = 'none'; });
+    const rs = [o.querySelector('.hit'), ...extra].map(e => e.getBoundingClientRect());
+    extra.forEach(e => { e.style.transition = ''; });
+    const l = Math.min(...rs.map(q => q.left)), t = Math.min(...rs.map(q => q.top));
+    return { left: l, top: t, width: Math.max(...rs.map(q => q.right)) - l, height: Math.max(...rs.map(q => q.bottom)) - t };
+  }
   function focusOn(o) {
-    const h = o && o.querySelector('.hit'); if (!h) return;
-    const a = h.getBoundingClientRect(), r = stage.getBoundingClientRect();
-    const tx = wide ? r.width * .3 : r.width * .5, ty = wide ? r.height * .5 : r.height * .25;
-    const maxW = wide ? r.width * .36 : r.width * .7, maxH = wide ? r.height * .56 : r.height * .3;
-    const s = Math.max(1, Math.min(maxW / a.width, maxH / a.height, 2.1));
+    const sheet = veil && veil.querySelector('.sheet'); if (!o || !o.querySelector('.hit') || !sheet) return;
+    // 재기 전에 화면을 제자리로 돌린다 — 돌아가는 도중에 재면 물건 자리가 어긋난다
+    svg.style.transition = 'none'; svg.style.transform = '';
+    const a = frameOf(o), r = stage.getBoundingClientRect(), W = r.width, H = r.height;
+    svg.style.transition = '';
+    const sw = sheet.offsetWidth, sh = sheet.offsetHeight;
+    let tx, ty, s;
+    if (wide) {
+      const M = Math.max(28, W * .04), G = Math.min(72, Math.max(40, W * .035));
+      s = Math.max(1, Math.min(Math.min(W * .36, W - M * 2 - G - sw) / a.width, H * .56 / a.height, 2.1));
+      const ow = a.width * s, x0 = Math.max(M, (W - ow - G - sw) / 2);
+      tx = x0 + ow / 2; ty = H / 2;
+      sheet.style.left = Math.min(x0 + ow + G, W - M - sw) + 'px'; sheet.style.right = 'auto';
+    } else {
+      // 세로 화면 — 종이가 아래에서 올라오니 물건은 위 단추 줄과 종이 사이 빈자리 가운데에 선다
+      const top = 60, room = Math.max(H * .3, H - sh - 24 - top);
+      s = Math.max(1, Math.min(W * .7 / a.width, room * .8 / a.height, 2.1));
+      tx = W / 2; ty = top + room / 2;
+    }
     const cx = a.left + a.width / 2 - r.left, cy = a.top + a.height / 2 - r.top;
     svg.style.transform = `translate(${tx - cx * s}px, ${ty - cy * s}px) scale(${s})`;
+    const rx = a.width * s * .75 + 40, ry = a.height * s * .75 + 40;
+    veil.style.background = `radial-gradient(${rx}px ${ry}px at ${tx}px ${ty}px, transparent 62%, var(--veil))`;
   }
   const unfocus = () => { svg.style.transform = ''; };
 
@@ -1347,7 +1378,8 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--hand);over
   if (/^room-[nesw]$/.test(h)) { S.door = 'open'; S.scene = 'room'; S.wall = WALLS.indexOf(h[5]); sync(); }
   else if (h === 'keypad') openKeypad(svg.querySelector('[data-obj=keypad]'));
   else if (h === 'order') { S.mail = 'open'; sync(); openPanel(PANEL.order(), 'receipt', svg.querySelector('[data-obj=mailbox]')); }
-  else if (h === 'presskit') { S.gift = 'open'; sync(); openPanel(PANEL.presskit, '', svg.querySelector('[data-obj=presskit]')); }
+  // 뚜껑이 다 날아간 뒤에 다가가야 뚜껑까지 화면에 들어온다 (뚜껑 움직임 .45s)
+  else if (h === 'presskit') { S.gift = 'open'; sync(); setTimeout(() => openPanel(PANEL.presskit, '', svg.querySelector('[data-obj=presskit]')), 520); }
   else if (h === 'matup') { S.mat = 'up'; sync(); }
   else if (h === 'devlog') location.replace('/devlog/');
   else if (h === 'open') { S.door = 'open'; sync(); }
